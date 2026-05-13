@@ -1,0 +1,1345 @@
+//Alertas
+
+#### @name updateUser
+POST http://localhost:4004/alertas/updateUser
+Content-Type: application/json
+
+{
+  "input": {
+    "idAlertas": 1,
+    "json": [
+      { "ID_PORTAL": 6943 }
+    ]
+  }
+}
+
+#### @name updateActividades
+POST http://localhost:4004/alertas/updateActividades
+Content-Type: application/json
+
+{
+    "input": {
+      "idAlertas": 1,
+        "actividades": [
+          { "ID_ACTIVIDAD": 3 } ]
+  }
+}
+
+
+#### @name updateTipDoc
+POST http://localhost:4004/alertas/updateTipDoc
+Content-Type: application/json
+
+{
+  "input": {
+    "idAlertas": 1,
+    "tipDocs": [
+      { "ID_TIPO_DOCUMENTO": 777 }
+    ]
+  }
+}
+
+
+
+
+
+
+#### @name getListTipDoc
+GET http://localhost:4004/alertas/getListTipDoc(idAlertas = 2)
+Content-Type: application/json
+
+#### @name getListCantPortales
+GET http://localhost:4004/alertas/getListCantPortales(idAlertas = 2)
+Content-Type: application/json
+
+#### @name getListPortales
+GET http://localhost:4004/alertas/getListPortales(idAlertas = 1)
+Content-Type: application/json
+
+#### @name getDataListActividades
+GET http://localhost:4004/alertas/getListActividades(idAlertas = 2)
+Content-Type: application/json
+
+
+
+
+//CreacionUsuarios
+
+#### @name getRoles/Roles
+POST http://localhost:4004/creacionUsuarios/roles
+Content-Type: application/json
+
+{}
+
+#### @name getRolesUsuario/selectedRoles
+POST http://localhost:4004/creacionUsuarios/selectedRoles
+Content-Type: application/json
+
+{"usuario": 21}
+
+#### @name getPerfilesUsuario/selectedPerfiles
+POST http://localhost:4004/creacionUsuarios/selectedPerfiles
+Content-Type: application/json
+
+{"usuario": 21}
+
+#### @name portales
+POST http://localhost:4004/creacionUsuarios/portales
+Content-Type: application/json
+
+{ "usuario": 135}
+
+#### @name getTipoDocumento/tipoDocumento
+POST http://localhost:4004/creacionUsuarios/tipoDocumento
+Content-Type: application/json
+
+{"rol": 44}
+
+#### @name getUsuarioReferencia/usuarioReferencia
+POST http://localhost:4004/creacionUsuarios/usuarioReferencia
+Content-Type: application/json
+
+{"perfil": 20}
+
+#### @name getUsuarioReferenciaRol/rolesReferencia
+POST http://localhost:4004/creacionUsuarios/rolesReferencia
+Content-Type: application/json
+
+{"rol": 44}
+
+#### @name getAccesoFolder/accesoFolder
+POST http://localhost:4004/creacionUsuarios/accesoFolder
+Content-Type: application/json
+
+{"perfil": 7}
+
+
+//services
+
+### @name getDetVis
+POST http://localhost:4004/services/getDetVis
+Content-Type: application/json
+
+
+ {
+  "Almacenamiento": "IN (2,1)",
+  "fechaInicial": "2020-01-01",
+  "fechaTope": "2026-12-31"
+
+}
+
+### @name getListAlert
+
+POST http://localhost:4004/services/getListAlert
+Content-Type: application/json
+
+{
+  "json":{[
+    "ID_TIPO_DOCUMENTO": "",
+    "ACCION": 
+  ]}
+}
+
+### @name getPermisoCargaArchivoContenido
+GET http://localhost:4004/services/getPermisoCargaArchivoContenido( idCat = 13416 )
+Content-Type: application/json
+
+### @name getListColumnTable
+GET http://localhost:4004/services/getListColumnTable( table = 'TIPO_DOCUMENTO' )
+Content-Type: application/json
+
+### @name getObjID
+GET http://localhost:4004/services/getObjID(idTD = 63510)
+Content-Type: application/json
+
+### @name getVersionDetalle
+GET http://localhost:4004/services/getVersionDetalle(idDetalle = 55693)
+Content-Type: application/json
+
+### @name arbolDeNavegacionPortal
+GET http://localhost:4004/services/arbolDeNavegacionPortal(idPadre = 1)
+Content-Type: application/json
+
+### @name getListTD
+GET http://localhost:4004/services/getListTD
+Content-Type: application/json
+
+### @name getListTDAtributo
+GET http://localhost:4004/services/getListTDAtributo(idTD = 929)
+Content-Type: application/json
+
+### @name updateMetadata
+POST http://localhost:4004/services/updateMetadata
+Content-Type: application/json
+
+{
+  "json": {
+    "ID_DOCUMENTO": 14859,
+    "METADATA": [
+      {
+        "ATRIBUTO": "NUMERO_CONTRATO",
+        "VALUE": "Contrato actualizadoTEST"
+      },
+      {
+        "ATRIBUTO": "FechaCarga",
+        "VALUE": "2026-05-05"
+      }
+    ]
+  }
+}
+
+### @name updateDocument
+POST http://localhost:4004/services/updateDocument
+Content-Type: application/json
+
+{
+  "json": {
+    "ID_TIPO_DOCUMENTO": 998,
+    "ID_CATEGORIA": 72955
+  }
+}
+
+### @name getPermisoCargaArchivo
+POST http://localhost:4004/services/getPermisoCargaArchivo
+Content-Type: application/json
+
+{
+  "json": {
+    "ID_CATEGORIA": 123,
+    "TEXTO": "nodoContenido",
+    "ID_PORTAL": 6232,
+    "ID_USUARIO": 8
+  }
+}
+
+### @name getPermisoCargaArchivo2
+POST http://localhost:4004/services/getPermisoCargaArchivo
+Content-Type: application/json
+
+{
+  "json": {
+    "ID_CATEGORIA": 9647,
+    "TEXTO": "nodoBusqueda",
+    "ID_PORTAL": 6232,
+    "ID_USUARIO": 8
+  }
+}
+
+### @name getPermisoCargaArchivo2
+POST http://localhost:4004/services/getPermisoCargaArchivo
+Content-Type: application/json
+
+{
+  "json": {
+    "ID_CATEGORIA": 13069,
+    "TEXTO": "listaArchivo",
+    "ID_PORTAL": 11434,
+    "ID_USUARIO": 8
+  }
+}
+
+### @name datosUserPortal
+GET http://localhost:4004/services/datosUserPortal(CORREO = 'llopez@sapnet.cl')
+Content-Type: aplication/json
+
+### @name getNodoJerarquico
+POST  http://localhost:4004/services/getNodoJerarquico
+Content-Type: application/json
+                      
+{
+  "json": {
+    "ID_PORTAL": 50490
+    }
+}
+
+### @name getTagxPortal
+POST http://localhost:4004/services/getTagxPortal
+Content-Type: application/json
+
+{
+  "json": {
+    "ID_PORTAL": 283
+    }
+}
+
+### @name sendMailMasivo
+POST http://localhost:4004/services/sendMailMasivo
+Content-Type: application/json
+
+{
+  "input": {
+    "ASUNTO": "Prueba envío correo masivo",
+    "RECEPTORES": [
+      {
+        "NOMBRE": "Usuario Prueba",
+        "MAIL": "fmarquez@becloud.cl"
+      }
+    ],
+    "COPIADOS": [
+      {
+        "NOMBRE": "Copia Prueba",
+        "MAIL": "copia@correo.cl"
+      }
+    ],
+    "ADJUNTOS": [
+      {
+        "NOMBRE_ARCHIVO": "prueba.txt",
+        "BASE64": "SG9sYSBlc3RvIGVzIHVuIGFyY2hpdm8gZGUgcHJ1ZWJh",
+        "MIMETYPE": "text/plain"
+      }
+    ],
+    "MENSAJE": "<p>Estimado,</p><p>Este es un correo de prueba enviado desde CAP.</p><p>Saludos.</p>"
+  }
+}
+
+### @name getListAlert
+POST http://localhost:4004/services/getListAlert
+Content-Type: application/json 
+
+{
+  "json": {
+    "ID_TIPO_DOCUMENTO": 723,
+    "ACCION": 3
+    }
+}
+
+### @name getAlertas
+POST http://localhost:4004/services/getAlertas
+Content-Type: application/json
+
+{
+  "json": {
+    "ID_ACTIVIDAD": 1,
+    "ACCION": "Carga de archivo",
+    "ID_USUARIO": 21,
+    "ID_PORTAL": 11434,
+    "NOMBRETD": "Carga Archivo"
+  }
+}
+
+### @name getBusquedaFiltros
+POST http://localhost:4004/services/getBusquedaFiltros
+Content-Type: application/json
+
+{
+  "json": {
+    "ID_CATEGORIA": 51810,
+    "TEXTO": "GASCO",
+    "ID_PORTAL": 11434,
+    "ID_USUARIO": 21,
+    "RANGO_FECHA": "X",
+    "INICIO_PAGINA": 0,
+    "FIN_PAGINA": 10,
+    "CONTENIDO_EXTRA": "[]"
+  }
+}
+
+### @name getAyuda
+GET http://localhost:4004/services/getAyuda
+Content-Type: application/json
+
+### @name portalesPorUsuario
+GET http://localhost:4004/services/portalesPorUsuario(ID_USUARIO = 21)
+Content-Type: application/json
+
+### @name validacionUsuarioCategoria
+POST http://localhost:4004/services/validacionUsuarioCategoria
+Content-Type: application/json
+
+{
+  "json": {
+    "VALOR": "MjE6MTE5ODI="
+  }
+}
+
+### @name busquedaHeader
+POST http://localhost:4004/services/busquedaHeader
+Content-Type: application/json
+
+{
+  "json": {
+    "TEXTO": "[34]",
+    "MARCA": "",
+    "ID_PORTAL": 11434,
+    "ID_USUARIO": 21,
+    "FECHA": "'2026-05-06'",
+    "HORA": "'12:00:00'",
+    "INICIO_PAGINA": 0,
+    "FIN_PAGINA": 10,
+    "CONTENIDO_EXTRA": "[]"
+  }
+}
+
+### @name countNotificationAprob
+POST http://localhost:4004/services/countNotificationAprob
+Content-Type: application/json
+
+{
+  "json":{
+    "ID_USUARIO": 21,
+    "ID_PORTAL": 11434
+  }
+}
+
+### @name getUserAdministrator
+POST http://localhost:4004/services/getUserAdministrator
+Content-Type: application/json
+
+{
+  "json":{
+    "ID_USUARIO": 21,
+    "ID_PORTAL": 11434
+  }
+}
+
+### @name updateFavoritos
+POST http://localhost:4004/services/updateFavoritos
+Content-Type: application/json
+
+{
+  "json":{
+    "MARCA": "X",
+    "ID_USUARIO": 200,
+    "ID_PORTAL": 10000,
+    "ID_CATEGORIA": 10000,
+    "ID_TIPO_DOCUMENTO": 10002
+  }
+}
+
+### @name propiedadesLista
+POST http://localhost:4004/services/propiedadesLista
+Content-Type: application/json
+
+{
+  "json":{
+    "ID_CATEGORIA": 64420
+
+  }
+}
+
+### @name getContacto
+POST http://localhost:4004/services/getContacto
+Content-Type: application/json
+
+{
+  "json":{
+    "EMPRESA": 1
+  }
+}
+
+### @name getFavoritos
+POST http://localhost:4004/services/getFavoritos
+Content-Type: application/json
+
+{
+  "json": {
+    "ID_PORTAL": 11434,
+    "ID_USUARIO": 21,
+    "INICIO_PAGINA": 0,
+    "FIN_PAGINA": 10,
+    "CONTENIDO_EXTRA": "[]"
+  }
+}
+
+### @name getSuggestionMB
+POST http://localhost:4004/services/getSuggestionNB
+Content-Type: application/json
+
+{
+  "json":{
+    "ID_CATEGORIA": 53802
+  }
+}
+
+### @name getMetadataTipoDocumento
+POST http://localhost:4004/services/getMetadataTipoDocumento
+Content-Type: application/json
+
+{
+  "json":{
+    "ID_TIPO_DOCUMENTO": 1880
+  }
+}
+
+### @name getSuggestionTipoDocumento
+POST http://localhost:4004/services/getSuggestionTipoDocumento
+Content-Type: application/json
+
+{
+  "json":{
+    "ID_TIPO_DOCUMENTO": 998,
+    "ATRIBUTO": "GASCO GLP"
+  }
+}
+
+### @name getBusquedaTipoDocumento
+POST http://localhost:4004/services/getBusquedaTipoDocumento
+Content-Type: application/json
+
+{
+  "json": {
+    "TIPO_BUSQUEDA": "Estructura",
+    "ID_PORTAL": 11434,
+    "ID_USUARIO": 21,
+    "ID_CATEGORIA": 64420,
+    "TEXTO": "busquedaTAG",
+    "TAGS": "[34]",
+    "CONTENIDO": "[{\"ATRIBUTO\":\"CLIENTE\"}]",
+    "CONTENIDO_EXTRA": "[]"
+  }
+}
+
+### @name getListaMetadata
+POST http://localhost:4004/services/getListaMetadata
+Content-Type: application/json
+
+{
+  "json": {
+    "TEXTO": "listaArchivo",
+    "ID_USUARIO": 21,
+    "ID_PORTAL": 11434,
+    "ID_CATEGORIA": 64420,
+    "TAGS": "[]"
+  }
+}
+
+### @name getPreguntasFrecuentes
+POST http://localhost:4004/services/getPreguntasFrecuentes
+Content-Type: application/json
+
+{
+  "json":{
+    "ID_CATEGORIA": 11983
+  }
+}
+
+### @name getRolesTD
+POST http://localhost:4004/services/getRolesTD
+Content-Type: application/json
+
+{
+  "json": {
+    "TEXTO": "nodoContenido",
+    "ID_CATEGORIA": 64420,
+    "ID_PORTAL": 11434,
+    "ID_USUARIO": 21
+  }
+}
+
+### @name getAllPermisos
+GET http://localhost:4004/services/getAllPermisos
+Content-Type: application/json
+
+### @name getPermisosNodo
+GET http://localhost:4004/services/getPermisosNodo
+Content-Type: application/json
+
+### @name getTipoDocumentoPorNodo
+POST http://localhost:4004/services/getTipoDocumentoPorNodo
+Content-Type: application/json
+
+{
+  "json":{
+    "ID_CATEGORIA": 6020
+  }
+}
+
+### @name getUrlDocumento
+POST http://localhost:4004/services/getUrlDocumento
+Content-Type: application/json
+
+{
+  "json": {
+    "IDS_CATEGORIA": "[64420]"
+  }
+}
+
+### @name updateRecientes
+POST http://localhost:4004/services/updateRecientes
+Content-Type: application/json
+
+{
+  "json":{
+    "ID_VISITAS": 999,
+    "FECHA": "2026-06-30",
+    "HORA": "12:00:00",
+    "ID_DETALLE": 9999
+  }
+}
+
+### @name activaVersion
+POST http://localhost:4004/services/activaVersion
+Content-Type: application/json
+
+{
+  "json":{
+    "ID_DETALLE": 69384,
+    "VERSION": 2
+  }
+}
+
+### @name generaVersion
+POST http://localhost:4004/services/generaVersion
+Content-Type: application/json
+
+{
+  "json": {
+    "ID_DETALLE": 69384,
+    "FECHA_CARGA": "2026-05-08",
+    "ID_USUARIO": 21,
+    "NOMBRE_ARCHIVO": "memoria.pdf",
+    "BASE64": "JVBERi0xLjQKJcfsj6IKMSAwIG9iago8PAovVHlwZSAvQ2F0YWxvZwovUGFnZXMgMiAwIFIKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1R5cGUgL1BhZ2VzCi9LaWRzIFszIDAgUl0KL0NvdW50IDEKPD4KZW5kb2JqCjMgMCBvYmoKPDwKL1R5cGUgL1BhZ2UKL1BhcmVudCAyIDAgUgovTWVkaWFCb3ggWzAgMCAyMDAgMjAwXQovQ29udGVudHMgNCAwIFIKPj4KZW5kb2JqCjQgMCBvYmoKPDwKL0xlbmd0aCA0NAo+PgpzdHJlYW0KQlQKL0YxIDEyIFRmCjUwIDEwMCBUZAooVGVzdCBQREYpIFRqCkVUCmVuZHN0cmVhbQplbmRvYmoKeHJlZgowIDUKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDE1IDAwMDAwIG4gCjAwMDAwMDAwNjQgMDAwMDAgbiAKMDAwMDAwMDExOSAwMDAwMCBuIAowMDAwMDAwMjA3IDAwMDAwIG4gCnRyYWlsZXIKPDwKL1NpemUgNQovUm9vdCAxIDAgUgo+PgpzdGFydHhyZWYKMzAxCiUlRU9G"
+  }
+}
+
+### @name arbolDeNavegacionPortal
+POST http://localhost:4004/services/arbolDeNavegacionPortal
+Content-Type: application/json
+
+{
+  "json": {
+    "ID_CATEGORIA_PADRE": 64417,
+    "ID_USUARIO": 21,
+    "FECHA": "2026-05-08",
+    "HORA": "12:00:00",
+    "GENERA_VISITA": true
+  }
+}
+
+### @name busquedaPermiso
+POST http://localhost:4004/services/busquedaPermiso
+Content-Type: application/json
+
+{
+  "json": {
+    "ID_TIPO_DOCUMENTO": 735,
+    "ID_USUARIO": 21,
+    "ACCION": "Descargar"
+  }
+}
+
+### @name getRecientes
+POST http://localhost:4004/services/getRecientes
+Content-Type: application/json
+
+{
+  "json": {
+    "ID_VISITAS": 2036,
+    "MARCA": "X",
+    "INICIO_PAGINA": 0,
+    "FIN_PAGINA": 10
+  }
+}
+
+### @name copyTD
+POST http://localhost:4004/services/copyTD
+Content-Type: application/json
+
+{
+  "json": {
+    "ID_TIPO_DOCUMENTO_ORIGINAL": 995,
+    "DESCRIPCION": "Copia test TD 995",
+    "NOMBRE": "TD COPIA TEST 995",
+    "ID_NODO": 9552,
+    "ORIGEN": "Dinámico"
+  }
+}
+
+//ServicesTubo
+
+### @name getFile
+GET http://localhost:4004/servicesTubo/getFile
+Content-Type: application/json
+
+### @name getTD
+GET http://localhost:4004/servicesTubo/getTD(ID_TIPO_DOCUMENTO = 587)
+Content-Type: application/json
+
+### @name getAplicaciones
+GET http://localhost:4004/servicesTubo/getAplicaciones
+Content-Type: application/Json
+
+### @name getProcesos
+GET http://localhost:4004/servicesTubo/getProcesos( idApp = 10 )
+Content-Type: application/json
+
+### @name getTDocs
+GET http://localhost:4004/servicesTubo/getTDocs( idApp = 7, idProceso = 39 )
+Content-Type: application/json
+
+### @name getNodos
+GET http://localhost:4004/servicesTubo/getNodos( idTipoDoc = 999880 )
+Content-Type: application/json
+
+### @name getTDBiblioteca
+GET http://localhost:4004/servicesTubo/getTDBiblioteca( ID_TIPO_DOCUMENTO = 670 )
+Content-Type: application/json
+
+### @name getEstructuraMD
+GET http://localhost:4004/servicesTubo/getEstructuraMD( ID_APP = 7, ID_PROCESO = 93 )
+Content-Type: application/json
+
+//updateTipoDocumento
+
+### @name deleteDocumento
+POST http://localhost:4004/updateTipoDocumento/deleteDocumento
+Content-Type: application/json
+
+{
+  "input":{
+    "titulo": "TEST_DELETE_DOCUMENTO_CAP"
+  }
+}
+
+
+
+
+
+//ServicesTD
+
+### @name getBusquedaFiltros
+POST http://localhost:4004/servicesTD/getBusquedaFiltros
+Content-Type: application/json
+
+{
+  "input": {
+    "nodoTD": 64420,
+    "NA": "CLIENTE_UNICO_64420"
+  }
+}
+
+### @name getBusquedaAllArc
+POST http://localhost:4004/servicesTD/getBusquedaAllArc
+Content-Type: application/json
+
+{
+  "input": {
+    "nodoPortal": 11434,
+    "value": "memoria"
+  }
+}
+
+#### @name getListaTDFiltro
+POST http://localhost:4004/servicesTD/getListaTDFiltro
+Content-Type: application/json
+
+{
+  "input": {
+   "texto": "Z"
+  }
+}
+
+#### @name insertTD
+POST http://localhost:4004/servicesTD/insertTD
+Content-Type: application/json
+
+{
+  "input": {
+  "ID_TIPO_DOCUMENTO": 40,
+  "ID_NODO": 3506
+  }
+
+}
+
+#### @name deleteCat
+POST http://localhost:4004/servicesTD/deleteCat
+Content-Type: application/json
+
+{"input":{
+  "idCat": 12345
+}}
+
+#### @name habilitaCascada
+POST http://localhost:4004/servicesTD/habilitaCascada
+Content-Type: application/json
+
+{"input":{
+  "idCat": 12345
+}}
+
+#### @name editTD
+POST http://localhost:4004/servicesTD/editTD
+Content-Type: application/json
+
+{
+  "input": [
+    {
+      "arrPropiedades": [
+        {
+          "TIPO_DOCUENTO": 123,
+          "ID_CATEGORIA_NODO": 456,
+          "NOMBRE": "Tipo documento prueba",
+          "DESCRIPCION": "Descripción de prueba",
+          "FORMATO": "pdf",
+          "PESO": "50"
+        }
+      ],
+      "arrMetadata": [
+        {
+          "ID_METADATA": 123,
+          "ATRIBUTO": "GASCO GLP",
+          "DESCRIPCION": "test",
+          "TABLASAP": "",
+          "TIPO_ATRIBUTO": "string",
+          "OBLIGATORIEDAD": "SI",
+          "ORIGEN": "Manual",
+          "ESTADO": "Activo"
+        }
+      ],
+      "arrWorkflow": [
+        {
+          "NIVEL": 1,
+          "NOMBRE_USUARIO_APROBADOR": "Usuario Aprobador",
+          "ID_USUARIO": 21
+        }
+      ]
+    }
+  ]
+}
+
+#### @name getMD
+POST http://localhost:4004/servicesTD/getMD
+Content-Type: application/json
+
+{"input": {
+  "NA": "Z_NOTA",
+  "NA": ""
+}}
+
+#### @name insertMD
+POST http://localhost:4004/servicesTD/insertMD
+Content-Type: application/json
+
+{
+  "json": [
+    {
+      "ID_TIPO_DOCUMENTO": 11233,
+      "ATRIBUTO": "TEST",
+      "ID_NODO": 112244,
+      "LABEL": "TEST",
+      "ID_PORTAL": 1122
+    }
+  ]
+}
+
+#### @name getBusquedaArc
+POST http://localhost:4004/servicesTD/getBusquedaArc
+Content-Type: application/json
+
+{
+  "json": {
+    "ID_PORTAL": 11434,
+    "ID_USUARIO": 21,
+    "ID_CATEGORIA": 64420,
+    "INICIO_PAGINA": 0,
+    "FIN_PAGINA": 10
+  }
+}
+
+
+
+#### @name getBusquedaAllArc
+POST http://localhost:4004/servicesTD/getBusquedaAllArc
+Content-Type: application/json
+
+{ "nodoPortal": ,
+  "value": }
+
+  
+#### @name getBusquedaAllFiltros
+POST http://localhost:4004/servicesTD/getBusquedaAllFiltros
+Content-Type: application/json
+
+{ "nodoTD": ,
+  "NA": }
+
+#### @name getMetadata
+POST http://localhost:4004/servicesTD/getMetadata
+Content-Type: application/json
+
+{ "json": [{
+
+  "TIPO_DOCUMENTO": 998,
+  "ATRIBUTO": "GASCO GLP",
+  "TIPO_ATRIBUTO": "string"
+
+}]}
+
+
+
+
+
+#### @name getLabel
+GET http://localhost:4004/servicesTD/getLabel(nodoTD = 6364)
+Content-Type: application/json
+
+
+#### @name getNombreTD
+GET http://localhost:4004/servicesTD/getNombreTD(idTD = 880)
+Content-Type: application/json
+
+
+#### @name getFiltros
+GET http://localhost:4004/servicesTD/getFiltros(idTD = 1880)
+Content-Type: application/json
+
+
+#### @name getNodosDinamicos
+GET http://localhost:4004/servicesTD/getNodosDinamicos(nodo = 56236)
+Content-Type: application/json
+
+
+#### @name obtieneVinculacion
+GET http://localhost:4004/servicesTD/obtieneVinculacion(idCat = 3031)
+Content-Type: application/json
+
+
+#### @name getTDRefencia
+GET http://localhost:4004/servicesTD/getTDRefencia(idTD = 880)
+Content-Type: application/json
+
+
+#### @name verificaVinc
+GET http://localhost:4004/servicesTD/verificaVinc(idTD = 761, nodo = 2900)
+Content-Type: application/json
+
+
+#### @name getListaArc
+GET http://localhost:4004/servicesTD/getListaArc(idCat = 50515)
+Content-Type: application/json
+
+#### @name getNodoVisiblePadre
+GET http://localhost:4004/servicesTD/getNodoVisiblePadre(idCat = 3506)
+Content-Type: application/json
+
+#### @name getNodosEstructura
+GET http://localhost:4004/servicesTD/getNodosEstructura(idTD = 3506)
+Content-Type: application/json
+
+#### @name validaMD
+GET http://localhost:4004/servicesTD/validaMD(idTD = 44)
+Content-Type: application/json
+
+#### @name getArchivo
+GET http://localhost:4004/servicesTD/getArchivo(idTD = 350541)
+Content-Type: application/json
+
+#### @name getListaTDNodo
+GET http://localhost:4004/servicesTD/getListaTDNodo(idTD = 3506)
+Content-Type: application/json
+
+#### @name getNodoVisible
+GET http://localhost:4004/servicesTD/getNodoVisible(idCat = ?)
+Content-Type: application/json
+
+#### @name getListaTD
+GET http://localhost:4004/servicesTD/getListaTD
+Content-Type: application/json
+
+
+//tag
+
+#### @name getListUser
+GET http://localhost:4004/tag/getListUser
+Content-Type: application/json
+
+#### @name getListTagXTD
+GET http://localhost:4004/tag/getListTagXTD
+Content-Type: application/json
+
+
+### @name updateTagPortales
+POST http://localhost:4004/tag/updateTagPortales
+Content-Type: application/json
+
+{
+  "input": {
+    "idTag": 34,
+    "json": [
+      {
+        "ID_CATEGORIA": 11434
+      },
+      {
+        "ID_CATEGORIA": 64420
+      }
+    ]
+  }
+}
+
+### updateTagTD
+POST http://localhost:4004/tag/updateTagTD
+Content-Type: application/json
+
+{
+  "input": {
+    "idTD": 998,
+    "json": [
+      {
+        "ID_TAG": 34
+      },
+      {
+        "ID_TAG": 35
+      }
+    ]
+  }
+}
+
+
+
+
+
+
+//servicesArchivos
+
+#### @name insertContenido
+POST http://localhost:4004/servicesArchivos/insertContenido
+Content-Type: application/json
+
+{
+  "json": [{
+    "ID_NODO_DETALLE": 1122,
+    "ID_PORTAL": 2211,
+    "IDNODOCONTENIDO": 1122,
+    "TIPO": "Nodo_Contenido",
+    "ID_TIPO": 3
+  }]
+}
+
+#### @name insert
+POST http://localhost:4004/servicesArchivos/insert
+Content-Type: application/json
+
+{"json":{
+    "idTipoDocumento": 998,
+  "nombreFile": "TEST_INSERT_DOCUMENTO_002",
+  "descFile": "Documento de prueba con archivo",
+  "detalleArchivo": [
+    {
+      "TITULO": "archivo_prueba_insert.pdf",
+      "URL_ADJUNTO": "SG9sYSBtdW5kbw==",
+      "TYPE": "pdf",
+      "ID_DOC_OBL": null
+    }
+  ],
+  "metadataValue": [],
+  "usuario": 21,
+  "DetalleVis": [],
+  "FechaActual": "2026-05-08",
+  "idPadreSet": 64417,
+  "flag": 1
+
+}
+
+}
+#### @name existeAlmacenamiento
+GET http://localhost:4004/servicesArchivos/existeAlmacenamiento(idTipoDocumento = 745)
+Content-Type: application/json
+
+#### @name getUrl
+GET http://localhost:4004/servicesArchivos/getUrl(nodoHijo = 51810)
+Content-Type: application/json
+
+
+//getTipoDocumento
+
+### @name getListBase
+GET http://localhost:4004/getTipoDocumento/getListBase(idCat = 999000)
+Content-Type: application/json
+
+### @name getList
+GET http://localhost:4004/getTipoDocumento/getList(idCat = 13416)
+Content-Type: application/json
+
+### @name getIdNodo
+GET http://localhost:4004/getTipoDocumento/getIdNodo(idCat = 10844)
+Content-Type: application/json
+
+### @name getTDSet
+GET http://localhost:4004/getTipoDocumento/getTDSet(idCat = 6266, idUser = 8)
+Content-Type: application/json
+
+### @name get
+GET http://localhost:4004/getTipoDocumento/get(idCat = 6266, idUser = 8)
+Content-Type: application/json
+
+### @name getTipoDocumentoPortal
+GET http://localhost:4004/getTipoDocumento/getTipoDocumentoPortal(idCat = 72916, idUser = 8)
+Content-Type: application/json
+
+### @name getTipoDocumento
+GET http://localhost:4004/getTipoDocumento/getTipoDocumento(idCat = 6266, idUser = 8)
+Content-Type: application/json
+
+### @name getTag
+GET http://localhost:4004/getTipoDocumento/getTag(idTD = 2)
+Content-Type: application/json
+
+
+
+//getValoresMSAP
+
+#### @name getValoresMSAP
+GET http://localhost:4004/getValoresMSAP/get(idCategoria = 72919)
+Content-Type: application/json
+
+
+//deleteUserPortal
+
+#### @name deleteUserPortal
+POST http://localhost:4004/deleteUserPortal/delete
+Content-Type: application/json
+
+{"idPortal": }
+
+
+
+//insertIndex
+
+#### @name insertIndex
+POST http://localhost:4004/functionIndex/insertIndex
+Content-Type: application/json
+
+{"json": [{
+  "ID_TIPO_DOCUMENTO": 11,
+  "ID_DOCUMENTO": 2233,
+  "ID_APP": 1,
+  "ID_PROCESO": 1,
+  "ID_NODO": 1,
+  "APP_ORIGEN": "PORTAL TEST"
+
+}]}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Roles
+
+#### @name update
+POST http://localhost:4004/roles/update
+Content-Type: application/json
+
+{
+  "input": {
+    "idRol": 999,
+    "json": [
+      {
+        "ID_USUARIO": 5
+      }
+    ]
+  }
+}
+
+
+#### @name updateTD
+POST http://localhost:4004/roles/updateTD
+Content-Type: application/json
+
+{
+  "input": {
+    "idRol": 55,
+    "json": [
+      {
+        "ID_TIPO_DOCUMENTO": 556
+      }
+    ]
+  }
+}
+
+
+#### @name getListUser
+GET http://localhost:4004/roles/getListUser
+Content-Type: application/json
+
+#### @name getAccionesDisponibles
+GET http://localhost:4004/roles/getAccionesDisponibles(idRol = 5)
+Content-Type: application/json
+
+#### @name getAcciones
+GET http://localhost:4004/roles/getAcciones(idRol = 34)
+Content-Type: application/json
+
+#### @name getListNodos
+GET http://localhost:4004/roles/getListNodos(idRol = 34)
+Content-Type: application/json
+
+
+
+//perfiles
+
+#### @name updatePerfilesUsuario
+POST http://localhost:4004/perfiles/updatePerfilesUsuario
+Content-Type: application/json
+
+{
+  "input": {
+    "idPerfil": 4,
+    "json": [
+      {
+        "ID_PERFILES": 4,
+        "ID_USUARIO": 124
+      }
+    ]
+  }
+}
+
+#### @name update
+POST http://localhost:4004/perfiles/update
+Content-Type: application/json
+
+{
+  "input": {
+    "idPerfil": 10,
+    "json": [
+      {
+        "ID_CATEGORIA": 11982
+      }
+    ]
+  }
+}
+
+
+#### @name getListUser
+GET http://localhost:4004/perfiles/getListUser
+Content-Type: application/json
+
+#### @name getListNodos
+GET http://localhost:4004/perfiles/getListNodos(idPerfil = 20)
+Content-Type: application/json
+
+#### @name getValidacion
+GET http://localhost:4004/perfiles/getValidacion(idUser = 5, idNodo = 10)
+Content-Type: application/json
+
+
+
+
+
+
+
+
+
+
+
+
+//cutAndPaste
+
+#### @name paste
+POST http://localhost:4004/cutAndPaste/paste
+Content-Type: application/json
+
+{
+  "input":{
+    "json":[{
+              "nodoCut" : 123,
+              "nodoPaste" : 12345,
+              "pathspCortar": "google.cl",
+              "pathspPegar": "/_api/web/folders/add('/GASCO/PortalIng/GASCO GLP SA MOVIDA')",
+              "titulo": "GASCO GLP SA TEST"
+            }]
+  }
+}
+
+
+
+//getUsuariosAprobadores
+
+#### @name get
+GET http://localhost:4004/getUsuariosAprobadores/get
+Content-Type: application/json
+
+#### @name getTD
+GET http://localhost:4004/getUsuariosAprobadores/getTD
+Content-Type: application/json
+
+#### @name getNivel|
+GET http://localhost:4004/getUsuariosAprobadores/getNivel(id = 759)
+Content-Type: application/json
+
+//getListAdjuntosPF
+
+### @name getListAdjuntosPF
+GET http://localhost:4004/getListAdjuntosPF/get(idPregunta = 100)
+Content-Type: application/json
+
+//getMetadataArchivo
+
+### @name getMetadataArchivo
+GET http://localhost:4004/getMetadataArchivo/get(idDocumento = 9840)
+Content-Type: application/json
+
+//getUrlByCategoria
+
+### @name getUrlByCategoria
+GET http://localhost:4004/getUrlByCategoria/get(idCategoria = 72955)
+Content-Type: application/json
+
+//getPreguntasFrecuentes
+
+### @name getPreguntasFrecuentes
+GET http://localhost:4004/getPreguntasFrecuentes/get(idCategoria = 50500)
+Content-Type: application/json
+
+//getPropiedades
+
+### @name getPropiedadesLista
+GET http://localhost:4004/getPropiedades/getPropiedadesLista(idCategoria = 50500, flag = '1')
+Content-Type: application/json
+
+### @name get
+GET http://localhost:4004/getPropiedades/get(idCategoria = 50500, flag = '1')
+Content-Type: application/json
+
+
+//getBusquedaAll
+
+### @name getBusquedaAll
+GET http://localhost:4004/getBusquedaAll/get(texto = 'RAC_800', nodo = 6020)
+Content-Type: application/json
+
+
+//getIdUser
+
+### @name get
+GET http://localhost:4004/getIduser/get(nodo = 50550, idCategoria = 50553)
+Content-Type: application/json
+
+//getRolUser
+
+### @name get
+GET http://localhost:4004/getRolUser/get(userId = 21, idTD = 760)
+Content-Type: application/json
+
+//updateMetadataTipoDocumento
+
+### @name update
+POST http://localhost:4004/updateMetadataTipoDocumento/update
+Content-Type: application/json
+
+{
+  "input":{
+    "type": "time",
+    "value": "",
+    "tipoDocumento": "",
+    "atributo": ""
+  }
+
+}
+
+//getUserPortal
+
+### @name getUsername
+GET http://localhost:4004/getUserPortal/getUserName(user = 22)
+Content-Type: application/json
