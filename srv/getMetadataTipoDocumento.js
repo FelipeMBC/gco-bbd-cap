@@ -1,7 +1,11 @@
-  //////////////////////////////////
-  /////GETMETADATATIPODOCUMENTO/////
-  //////////////////////////////////
+//////////////////////////////////
+/////GETMETADATATIPODOCUMENTO/////
+//////////////////////////////////
 
+const cds = require("@sap/cds");
+
+module.exports = cds.service.impl(async function () {
+  const db = await cds.connect.to("db");
 
   function eliminaDuplicado(tuArreglo, atributodetuArreglo) {
 
@@ -69,10 +73,9 @@
       WHERE ID_METADATA = ? AND ID_TIPO_DOCUMENTO = ?
     `;
       const result = await cds.run(sql, [idMetadata, tipoDocumento]);
-
-      for (const gv of result) {
+      for (const rs of result) {
         record = {};
-        record.VALUE = gv.VALUE;
+        record.VALUE = rs.VALUE;
       }
 
     } catch (e) {
@@ -651,32 +654,32 @@
     return record;
   };
 
-  this.on('getDataValue', async (req) => {
+  this.on('getData', async (req) => {
     const { tipoDocumento, nombre } = req.data.input;
     const visualizadores = await getMetadataValue(tipoDocumento, nombre);
     return visualizadores;
   });
 
-  this.on('getData15', async (req) => {
-    const { tipoDocumento } = req.data.input;
+  this.on('get', async (req) => {
+    const { tipoDocumento } = req.data;
     const visualizadores = await getMetadata1(tipoDocumento);
     return visualizadores;
   });
 
-  this.on('getDataListDocObl', async (req) => {
-    const { tipoDocumento } = req.data.input;
+  this.on('getListDocObl', async (req) => {
+    const { tipoDocumento } = req.data;
     const visualizadores = await getListDocObl(tipoDocumento);
     return visualizadores;
   });
 
-  this.on('getDataList', async (req) => {
-    const { tipoDocumento } = req.data.input;
+  this.on('getList', async (req) => {
+    const { tipoDocumento } = req.data;
     const visualizadores = await getListMetadata(tipoDocumento);
     return visualizadores;
   });
 
-  this.on('getDataUpdate1', async (req) => {
-    const { tipoDocumento } = req.data.input;
+  this.on('update', async (req) => {
+    const { tipoDocumento } = req.data;
     const visualizadores = await getMetadataUpdate(tipoDocumento);
     return visualizadores;
   });
@@ -887,3 +890,5 @@
     return outPut;
 
   });
+
+});

@@ -4,5 +4,5 @@ service functionIndex {
     @open
     type object {};
     
-    action insertIndex(json: object)   returns object;
+    action insertIndex(json: object)   returns String;
 }

@@ -663,8 +663,8 @@ Content-Type: application/Json
 GET http://localhost:4004/servicesTubo/getProcesos( idApp = 10 )
 Content-Type: application/json
 
-### @name getTDocs
-GET http://localhost:4004/servicesTubo/getTDocs( idApp = 7, idProceso = 39 )
+### @name getTDoc
+GET http://localhost:4004/servicesTubo/getTDoc( idApp = 7, idProceso = 39 )
 Content-Type: application/json
 
 ### @name getNodos
@@ -690,6 +690,97 @@ Content-Type: application/json
     "titulo": "TEST_DELETE_DOCUMENTO_CAP"
   }
 }
+
+### @name updateDocumento
+POST http://localhost:4004/updateTipoDocumento/updateDocumento
+Content-Type: application/json
+
+{
+  "input": {
+    "json": {
+      "TIPO_DOCUMENTO": 123,
+      "ID_DOCUMENTO": 111,
+      "ATRIBUTO": "GASCO GLP"
+    }
+  }
+}
+
+### @name update
+POST http://localhost:4004/updateTipoDocumento/update
+Content-Type: application/json
+
+{
+  "input": {
+    "json": {
+      "NOMBRE": "carga",
+      "DESC": "carga",
+      "TIPO_DOCUMENTO": 40
+    }
+  }
+}
+
+### @name updateAFisico
+POST http://localhost:4004/updateTipoDocumento/updateAFisico
+Content-Type: application/json
+
+{
+  "input": {
+    "tipoDocumento": 998
+  }
+}
+
+### @name updateADigital
+POST http://localhost:4004/updateTipoDocumento/updateADigital
+Content-Type: application/json
+
+{
+  "input": {
+    "tipoDocumento": 998
+  }
+}
+
+### @name updateMetadata
+POST http://localhost:4004/updateTipoDocumento/updateMetadata
+Content-Type: application/json
+
+{
+  "input": {
+    "tipoDocumento": 999880
+  }
+}
+
+### @name updateNiveles
+POST http://localhost:4004/updateTipoDocumento/updateNiveles
+Content-Type: application/json
+
+{
+  "input": {
+    "idEST": 745
+  }
+}
+
+### @name updateElib
+POST http://localhost:4004/updateTipoDocumento/updateElib
+Content-Type: application/json
+
+{
+  "input": {
+    "tipoDocumento": 735
+  }
+}
+
+### @name updateFormato
+POST http://localhost:4004/updateTipoDocumento/updateFormato
+Content-Type: application/json
+
+{
+  "input": {
+    "tipoDocumento": 12223
+  }
+}
+
+
+
 
 
 
@@ -936,6 +1027,35 @@ Content-Type: application/json
 GET http://localhost:4004/servicesTD/getListaTD
 Content-Type: application/json
 
+//deleteUserPortal
+
+### @name deleteUserPortal
+POST http://localhost:4004/deleteUserPortal/delete
+Content-Type: application/json
+
+{"input": {"idPortal": 169}}
+
+//getPathSharePoint
+
+### @name get
+POST http://localhost:4004/getPathSharePoint/get
+Content-Type: application/json
+
+{
+  "input":{
+  "nombreArchivo": "12286596_6342090",
+  "idPadre": 63949
+  }
+}
+
+### @name getBreadCrumbs
+GET http://localhost:4004/getPathSharePoint/getBreadCrumbs(idPadre = 63949)
+Content-Type: application/json
+
+// functionIndex
+
+### @name i
+
 
 //tag
 
@@ -1109,9 +1229,56 @@ Content-Type: application/json
 
 }]}
 
+//getMetadataTipoDocumento
 
+#### @name getValue
+POST http://localhost:4004/getMetadataTipoDocumento/getValue
+Content-Type: application/json
 
+{
+  "input": {
+    "idMetadata": 25189,
+    "tipoDocumento": 998
+  }
+}
 
+### @name get
+GET http://localhost:4004/getMetadataTipoDocumento/get(tipoDocumento = 998)
+Content-Type: application/json
+
+### @name getData
+POST http://Localhost:4004/getMetadataTipoDocumento/getData
+Content-Type: application/json
+
+{
+  "input": {
+    "tipoDocumento": 552,
+    "nombre": "NCh 13"
+  }
+}
+
+### @name getListDocObl
+GET http://localhost:4004/getMetadataTipoDocumento/getListDocObl(tipoDocumento = 818)
+Content-Type: application/json
+
+### @name getList
+GET http://localhost:4004/getMetadataTipoDocumento/getList(tipoDocumento = 818)
+Content-Type: application/json
+
+### @name getIdMetadata
+POST http://localhost:4004/getMetadataTipoDocumento/getIdMetadata
+Content-Type: application/json
+
+{
+  "input": {
+    "tipoDocumento": 1883,
+    "nombre": "GASCO GLP"
+  }
+}
+
+### @name update
+GET http://localhost:4004/getMetadataTipoDocumento/update(tipoDocumento = 818)
+Content-Type: application/json
 
 
 
@@ -1343,3 +1510,173 @@ Content-Type: application/json
 ### @name getUsername
 GET http://localhost:4004/getUserPortal/getUserName(user = 22)
 Content-Type: application/json
+
+//transferencia
+### @name createTransferencia
+POST http://localhost:4004/transferencia/createTransferencia
+Content-Type: application/json
+
+{
+  "json": {
+    "BUS": "BUS_TEST_BASE_02",
+    "TABLA": "QMEL",
+    "FECHA": "2026-05-15",
+    "HORA": "15:45:00",
+    "APLICACION": 1,
+    "PROCESO": 1,
+    "TIPO_DOCUMENTO": 589,
+    "OBJETO_TRANSFERENCIA": [
+      {
+        "OBJETO": "QMNUM"
+      },
+      {
+        "OBJETO": "AUFNR"
+      }
+    ],
+    "FILTROS": [
+      {
+        "CAMPO": "QMNUM",
+        "VALOR": "000010026094",
+        "OPERADOR": "EQ",
+        "VALOR2": ""
+      },
+      {
+        "CAMPO": "QMART",
+        "VALOR": "M1",
+        "OPERADOR": "EQ",
+        "VALOR2": ""
+      }
+    ],
+    "CONSULTA_TRANSFERENCIA": [
+      {
+        "CAMPO": "QMNUM",
+        "TABLA": "QMEL",
+        "ORIGEN": "Dinámico",
+        "VALIDACION": [
+          {
+            "TIPO_DATO": "CHAR",
+            "LARGO_DATO": "12"
+          }
+        ],
+        "FIELDS": [
+          {
+            "OBJETO": "MANDT"
+          },
+          {
+            "OBJETO": "QMNUM"
+          }
+        ],
+        "ZJOIN": [
+          {
+            "TIPO": "INNER",
+            "TABLA": "QMIH",
+            "CAMPOI": "QMEL.QMNUM",
+            "CONDICION": "=",
+            "CAMPOD": "QMIH.QMNUM"
+          }
+        ],
+        "CONDICIONES": [
+          {
+            "CAMPO": "QMNUM",
+            "CONDICION": "EQ",
+            "VALOR": "000010026094",
+            "VALOR2": ""
+          }
+        ]
+      },
+      {
+        "CAMPO": "AUFNR",
+        "TABLA": "QMIH",
+        "ORIGEN": "Dinámico",
+        "VALIDACION": [
+          {
+            "TIPO_DATO": "CHAR",
+            "LARGO_DATO": "12"
+          }
+        ],
+        "FIELDS": [
+          {
+            "OBJETO": "AUFNR"
+          }
+        ],
+        "ZJOIN": [
+          {
+            "TIPO": "LEFT",
+            "TABLA": "AUFK",
+            "CAMPOI": "QMIH.AUFNR",
+            "CONDICION": "=",
+            "CAMPOD": "AUFK.AUFNR"
+          }
+        ],
+        "CONDICIONES": [
+          {
+            "CAMPO": "AUFNR",
+            "CONDICION": "NE",
+            "VALOR": "",
+            "VALOR2": ""
+          }
+        ]
+      }
+    ],
+    "METADATA_TRANSFERENCIA": [
+      {
+        "ID_METADATA": 16846,
+        "ATTRIBUTE": "EQUIPO_BASE_02",
+        "TIPO_ATRIBUTO": "Text",
+        "TABLA": "QMIH",
+        "CAMPO": "EQUNR",
+        "FIELDS": [
+          {
+            "OBJETO": "EQUNR"
+          }
+        ],
+        "JOIN": [
+          {
+            "TIPO": "INNER",
+            "TABLA": "QMIH",
+            "CAMPOI": "QMEL.QMNUM",
+            "CONDICION": "=",
+            "CAMPOD": "QMIH.QMNUM"
+          }
+        ],
+        "CONDICIONES": [
+          {
+            "CAMPO": "EQUNR",
+            "CONDICION": "NE",
+            "VALOR": "",
+            "VALOR2": ""
+          }
+        ]
+      },
+      {
+        "ID_METADATA": 16847,
+        "ATTRIBUTE": "ORDEN_BASE_02",
+        "TIPO_ATRIBUTO": "Text",
+        "TABLA": "QMIH",
+        "CAMPO": "AUFNR",
+        "FIELDS": [
+          {
+            "OBJETO": "AUFNR"
+          }
+        ],
+        "JOIN": [
+          {
+            "TIPO": "LEFT",
+            "TABLA": "AUFK",
+            "CAMPOI": "QMIH.AUFNR",
+            "CONDICION": "=",
+            "CAMPOD": "AUFK.AUFNR"
+          }
+        ],
+        "CONDICIONES": [
+          {
+            "CAMPO": "AUFNR",
+            "CONDICION": "NE",
+            "VALOR": "",
+            "VALOR2": ""
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -70,9 +70,9 @@ module.exports = cds.service.impl(async function () {
 
   async function updateTipoDocumento(json) {
 
-    const nombre = json[0].NOMBRE;
-    const desc = json[0].DESC;
-    const tipoDocumento = json[0].TIPO_DOCUMENTO;
+    const nombre = json.NOMBRE;
+    const desc = json.DESC;
+    const tipoDocumento = json.TIPO_DOCUMENTO;
 
     try {
       const sql = `UPDATE DB_TIPO_DOCUMENTO 
@@ -87,7 +87,7 @@ module.exports = cds.service.impl(async function () {
     }
   };
 
-  this.on('deleteformato', async (req) => {
+  this.on('updateFormato', async (req) => {
     const { tipoDocumento } = req.data.input;
     try {
       const sql = `DELETE FROM DB_PROP_TIPO_DOC
@@ -100,7 +100,7 @@ module.exports = cds.service.impl(async function () {
     }
   });
 
-  this.on('deleteMetadata', async (req) => {
+  this.on('updateMetadata', async (req) => {
     const { tipoDocumento } = req.data.input;
     try {
       const sql = `DELETE FROM DB_METADATA
@@ -113,7 +113,7 @@ module.exports = cds.service.impl(async function () {
     }
   });
 
-  this.on('deleteNiveles', async (req) => {
+  this.on('updateNiveles', async (req) => {
     const { idEST } = req.data.input;
     try {
       const sql = `DELETE FROM DB_NIVELES
@@ -126,19 +126,7 @@ module.exports = cds.service.impl(async function () {
     }
   });
 
-  async function deleteElib(tipoDocumento) {
-    try {
-      const sql = `DELETE FROM DB_ESTRATEGIA_LIBERACION 
-                     WHERE ID_TIPO_DOCUMENTO = ?`;
-      await cds.run(sql, [tipoDocumento]);
-
-      return "OK"
-    } catch (e) {
-      return "FALLO"
-    }
-  };
-
-  this.on('deleteAdigital', async (req) => {
+  this.on('updateADigital', async (req) => {
     const { tipoDocumento } = req.data.input;
     try {
       const sql = `DELETE FROM DB_TIPO_DOCUMENTO_DIGITAL
@@ -151,7 +139,7 @@ module.exports = cds.service.impl(async function () {
     }
   });
 
-  this.on('deleteAFisico', async (req) => {
+  this.on('updateAFisico', async (req) => {
     const { tipoDocumento } = req.data.input;
     try {
       const sql = `DELETE FROM DB_TIPO_DOCUMENTO_FISICO
@@ -164,7 +152,7 @@ module.exports = cds.service.impl(async function () {
     }
   });
 
-  this.on('updateData1', async (req) => {
+  this.on('update', async (req) => {
     const { json } = req.data.input;
     const rsp = await updateTipoDocumento(json);
     return rsp;
@@ -180,6 +168,18 @@ module.exports = cds.service.impl(async function () {
     return resp;
   });
 
+  async function deleteElib(tipoDocumento) {
+    try {
+      const sql = `DELETE FROM DB_ESTRATEGIA_LIBERACION 
+                     WHERE ID_TIPO_DOCUMENTO = ?`;
+      await cds.run(sql, [tipoDocumento]);
+
+      return "OK"
+    } catch (e) {
+      return "FALLO"
+    }
+  };
+
   async function getLib(tipoDocumento) {
 
     let sql;
@@ -190,8 +190,8 @@ module.exports = cds.service.impl(async function () {
                WHERE ID_TIPO_DOCUMENTO = ?`;
       const result = await cds.run(sql, [tipoDocumento]);
 
-      for (const gl of result) {
-        record = gl.ID_EST_LIB;
+      for (const rs of result) {
+        record = rs.ID_EST_LIB;
       }
     } catch (e) {
       return { error: e.message, accion: "getLib", query: sql }
@@ -199,7 +199,7 @@ module.exports = cds.service.impl(async function () {
     return record;
   };
 
-  this.on('getElib', async (req) => {
+  this.on('updateElib', async (req) => {
     const { tipoDocumento } = req.data.input;
     const rsp = await getLib(tipoDocumento);
 
@@ -286,9 +286,9 @@ module.exports = cds.service.impl(async function () {
   });
 
   async function deleteMetadataDocumento(json) {
-    const tipoDocumento = json[0].TIPO_DOCUMENTO
-    const idDocumento = json[0].ID_DOCUMENTO
-    const atributo = json[0].ATRIBUTO
+    const tipoDocumento = json.TIPO_DOCUMENTO
+    const idDocumento = json.ID_DOCUMENTO
+    const atributo = json.ATRIBUTO
 
     try {
       const sql = `DELETE FROM DB_METADATA_VALUE
@@ -303,8 +303,9 @@ module.exports = cds.service.impl(async function () {
     }
   };
 
-  this.on('getUpdateMetadataDocumento', async (req) => {
+  this.on('updateDocumento', async (req) => {
     const { json } = req.data.input;
+    console.log(json)
     const rsp = await deleteMetadataDocumento(json);
     return rsp;
   })

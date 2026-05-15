@@ -59,19 +59,23 @@ entity ADM_PORTAL {
             HORA_CREACION  : Time;
 };
 
-
 entity ALERTAS {
         key ALE_ID                  : Integer not null;
+            ALE_NOMBRE              : String(100);
             ALE_ASUNTO              : String(100) not null;
             ALE_DESTINATARIO        : String(100) not null;
-            ALE_BODY                : String(500) not null;
+            ALE_BODY                : String(5000) not null;
             ESTADO                  : Integer;
             ID_TIPODOCUMENTOXALERTA : Integer;
             ID_PORTALXALERTA        : Integer;
             ID_ACTIVIDADXALERTA     : Integer;
 };
 
-
+entity ALERTAS_DESTINATARIO {
+        key ID_ALERTAS_DESTINATARIO : String(100) not null;
+            ALE_ID                  : Integer not null;
+            CORREO                  : String(100) not null;
+}
 entity ASIGNACIONES_ROL {
         key ID_ASIGNACION_ROL : Integer not null;
             ID_CARPETA        : Integer not null;

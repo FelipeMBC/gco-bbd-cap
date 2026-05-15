@@ -4,7 +4,7 @@ service getPathSharePoint {
     @open
     type object {};
 
-    action getData31(input: object)      returns object;
-    action getDataUrlImen(input: object) returns object;
+    action get(input: object)            returns array of object;
+    function getBreadCrumbs(idPadre: Integer) returns array of object;
 
 }

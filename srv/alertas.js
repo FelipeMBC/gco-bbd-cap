@@ -1,397 +1,717 @@
-
-///////////////////////
-///////ALERTAS/////////
-///////////////////////
-
 const cds = require("@sap/cds");
+const crypto = require("crypto");
 
 module.exports = cds.service.impl(async function () {
     const db = await cds.connect.to("db");
 
-    async function getSequence(nombreSequence) {
-        let sql;
-        let sValue = false;
+    const T_ALERTAS = "DB_ALERTAS";
+    const T_DESTINATARIOS = "DB_ALERTAS_DESTINATARIO";
+    const T_ACTIVIDADES = "DB_ACTIVIDADES";
 
-        try {
-            sql = `SELECT ${nombreSequence}.NEXTVAL AS ID FROM DUMMY`;
+    const C_ACT_ID = "ID_ACTIVIDADES";
+    const C_ACT_NOMBRE = "NOMBRE";
 
-            const result = await cds.run(sql)
-            for (const rs of result)
-                sValue = rs.ID;
+    const SEQ_ALERTA = "ALE_ID";
 
-        } catch (e) {
-            return { msg: 'No se encontro el ID', r: false }
+    this.on("listar", async (req) => {
+        const tx = db.tx(req);
+        const input = req.data.input || {};
+
+        const search = input.search ? String(input.search).trim() : "";
+        const actividad = input.actividad !== undefined && input.actividad !== null && input.actividad !== "" ? Number(input.actividad) : null;
+        const estado = input.estado !== undefined && input.estado !== null && input.estado !== "" ? Number(input.estado) : null;
+
+        let sql = `
+            SELECT
+                A.ALE_ID,
+                A.ALE_NOMBRE,
+                A.ALE_ASUNTO,
+                A.ALE_DESTINATARIO,
+                A.ALE_BODY,
+                A.ESTADO,
+                CASE
+                    WHEN A.ESTADO = 1 THEN 'Activo'
+                    WHEN A.ESTADO = 2 THEN 'Inactivo'
+                    ELSE 'Sin estado'
+                END AS ESTADO_TEXTO,
+                A.ID_ACTIVIDADXALERTA,
+                ACT.${C_ACT_NOMBRE} AS ACTIVIDAD_NOMBRE,
+                COUNT(D.ID_ALERTAS_DESTINATARIO) AS TOTAL_DESTINATARIOS
+            FROM ${T_ALERTAS} A
+            LEFT JOIN ${T_ACTIVIDADES} ACT
+                ON ACT.${C_ACT_ID} = A.ID_ACTIVIDADXALERTA
+            LEFT JOIN ${T_DESTINATARIOS} D
+                ON D.ALE_ID = A.ALE_ID
+            WHERE 1 = 1
+        `;
+
+        const params = [];
+
+        if (search) {
+            sql += `
+                AND (
+                    UPPER(A.ALE_NOMBRE) LIKE UPPER(?)
+                    OR UPPER(A.ALE_ASUNTO) LIKE UPPER(?)
+                    OR UPPER(ACT.${C_ACT_NOMBRE}) LIKE UPPER(?)
+                )
+            `;
+            params.push(`%${search}%`, `%${search}%`, `%${search}%`);
         }
-        return sValue;
-    };
 
-    async function getSelectedPortal(idUser, idAlertas) {
-        try {
-            const sql = `SELECT COUNT(*) AS EXISTE FROM DB_PORTALXALERTA
-            WHERE ID_PORTAL = ?
-            AND ALE_ID = ?
-            LIMIT 1`;
-
-            const result = await cds.run(sql, [idUser, idAlertas])
-
-            return result.length > 0;
-        } catch (e) {
-            return false;
+        if (actividad !== null && !Number.isNaN(actividad)) {
+            sql += ` AND A.ID_ACTIVIDADXALERTA = ? `;
+            params.push(actividad);
         }
-    };
 
-    async function getListPortalesDisponibles(idAlertas) {
+        if (estado !== null && !Number.isNaN(estado)) {
+            sql += ` AND A.ESTADO = ? `;
+            params.push(estado);
+        }
 
-        let sql;
-        let output = [];
+        sql += `
+            GROUP BY
+                A.ALE_ID,
+                A.ALE_NOMBRE,
+                A.ALE_ASUNTO,
+                A.ALE_DESTINATARIO,
+                A.ALE_BODY,
+                A.ESTADO,
+                A.ID_ACTIVIDADXALERTA,
+                ACT.${C_ACT_NOMBRE}
+            ORDER BY A.ALE_ID DESC
+        `;
 
         try {
-            sql = `SELECT
-           ID_CATEGORIA,
-           TITULO
-           FROM
-           DB_CATEGORIA
-           WHERE
-           ID_PADRE = 0`; /*--ID_PADRE = 0 HAS TO EXISTS ON DB_CATEGORIA FOR SUCCESS IN THIS SERVICE, Tiene que existir en DB_CATEGORIA, ID_PADRE VALOR 0. 1019323 WORKS/FUNCIONA --*/
+            const data = await tx.run(sql, params);
 
-            const result = await cds.run(sql);
-
-            for (const rs of result) {
-                let record = {};
-                record.ID_PORTAL = rs.ID_CATEGORIA;
-                record.TITULO = rs.TITULO;
-                record.SELECTED = await getSelectedPortal(rs.ID_CATEGORIA, idAlertas);
-
-                record.ID_ALERTA = idAlertas;
-
-                if (record.ID_CATEGORIA !== 1707 && record.ID_CATEGORIA !== 1708) {
-                    output.push(record);
+            return [
+                {
+                    code: 200,
+                    data
                 }
-            }
+            ];
         } catch (e) {
-            return { error: e.message, accion: "getListPortalesDisponibles", query: sql }
-        }
-        return output;
-    };
+            console.log("ERROR listar alertas:", e);
 
-    this.on('getListPortales', async (req) => {
-        try {
-            const { idAlertas } = req.data;
-            return await getListPortalesDisponibles(idAlertas);
-        } catch (e) {
-            req.reject(500, e.message)
-        }
-    }); //getListPortales
-
-    async function deletePortales(idAlertas) {
-        let sql;
-
-        try {
-            sql = `
-        DELETE FROM
-        DB_PORTALXALERTA
-        WHERE ALE_ID = ?`;
-
-            await cds.run(sql, [idAlertas]);
-
-            return "OK";
-        } catch (e) {
-            return { error: e.message, accion: "deletePortales", query: sql };
-        }
-    };
-
-    this.on('update', async (req) => {
-        const { idAlertas, json } = req.data.input;
-        let cant = json.length;
-        let sql;
-        let resp = await deletePortales(idAlertas);
-
-        try {
-            console.log("deletePortales resp:", resp);
-            console.log("idAlertas:", idAlertas);
-            console.log("json:", json);
-
-            for (let j = 0; j < cant; j++) {
-                let id_portal = json[j].ID_PORTAL;
-                let idAlertasPortal = await getSequence("ID_PORTALXALERTA");
-
-                console.log("idAlertasPortal:", idAlertasPortal);
-                console.log("id_portal:", id_portal);
-                console.log("idAlertas:", idAlertas);
-
-                sql = `INSERT INTO DB_PORTALXALERTA VALUES (?,?,?)`;
-                await cds.run(sql, [idAlertasPortal, id_portal, idAlertas]);
-
-                console.log("insert ejecutado");
-            }
-
-            return {
-                ok: true,
-                mensaje: "Insert realizado",
-                deleteResp: resp
-            };
-        } catch (e) {
-            console.log("ERROR updateUser:", e);
-            return { error: e.message, accion: "updateUser", query: sql };
+            return [
+                {
+                    code: 500,
+                    data: {
+                        accion: "listar",
+                        mensaje: e.message,
+                        query: sql
+                    }
+                }
+            ];
         }
     });
 
-    this.on('getListCantPortales', async (req) => {
-        const { idAlertas } = req.data;
-        let sql;
+    this.on("obtener", async (req) => {
+        const tx = db.tx(req);
+        const input = req.data.input || {};
+        const aleId = Number(input.ALE_ID || input.aleId || input.id);
 
-        try {
-            sql = `
-             SELECT COUNT(*) AS TOTAL
-             FROM DB_PORTALXALERTA
-             WHERE ALE_ID = ?`;
-            const result = await cds.run(sql, [idAlertas]);
-
-            return result;
-
-        } catch (e) {
-            return { error: e.message, accion: "getListCantPortales", query: sql }
-        }
-    });//getListCantPortales
-
-    async function getPortales(idAlertas) {
-        let outPut = [];
-        let sql;
-
-        try {
-            sql = `
-      SELECT
-        POR.ID_PORTAL AS ID_PORTAL,
-        TO_VARCHAR(POR.ID_PORTAL) AS NOMBREPORTAL
-      FROM
-        DB_PORTALXALERTA POR
-      WHERE
-        POR.ALE_ID = ?`;
-
-            const result = await cds.run(sql, [idAlertas]);
-
-            for (const gp of result) {
-                outPut.push({
-                    ID_PORTAL: gp.ID_PORTAL,
-                    NOMBREPORTAL: gp.NOMBREPORTAL
-                });
-            }
-        } catch (e) {
-            console.error("getPortales error:", e.message);
-            return [];
-        }
-        return outPut;
-    };
-
-    async function getSelectedTipDoc(idTipoDocumento, idAlertas) {
-        let sql;
-        try {
-            sql = `
-      SELECT 1 AS ok
-      FROM DB_TIPODOCUMENTOXALERTA
-      WHERE ID_TIPO_DOCUMENTO = ? AND ALE_ID = ?
-      LIMIT 1
-    `;
-            const result = await cds.run(sql, [idTipoDocumento, idAlertas]);
-            return result;
-        } catch (e) {
-            return { info: false, error: e.message, accion: "getSelectedTipDoc", query: sql }
-        }
-    };
-
-    async function getListTipDocDisponibles(idAlertas) {
-        let output = [];
-        let sql;
-
-        try {
-            const portales = await getPortales(idAlertas);
-            console.log(portales)
-
-            if (!Array.isArray(portales)) {
-                throw new Error(portales.error || 'Error al obtener portales');
-            }
-
-            sql = `
-            SELECT DISTINCT
-            TIPDOC.ID_TIPO_DOCUMENTO   AS ID_TIPO_DOCUMENTO,
-            TIPDOC.NOMBRE              AS NOMBRETIPDOC
-             FROM DB_TIPO_DOCUMENTO AS TIPDOC
-              INNER JOIN DB_VINCULACION AS VIN
-               ON VIN.ID_TIPO_DOCUMENTO = TIPDOC.ID_TIPO_DOCUMENTO
-            WHERE VIN.NODO_PORTAL = ?`;
-
-            for (const p of portales) {
-                const result = await cds.run(sql, [p.ID_PORTAL]);
-
-                for (const gtipdoc of result) {
-                    let record = {};
-                    record.ID_TIPO_DOCUMENTO = gtipdoc.ID_TIPO_DOCUMENTO;
-                    record.NOMBRETIPDOC = gtipdoc.NOMBRETIPDOC;
-                    record.NOMBREPORTAL = p.NOMBREPORTAL;
-                    record.SELECTED = await getSelectedTipDoc(gtipdoc.ID_TIPO_DOCUMENTO, idAlertas);
-
-                    output.push(record);
+        if (!aleId || Number.isNaN(aleId)) {
+            return [
+                {
+                    code: 400,
+                    data: {
+                        mensaje: "Debe enviar ALE_ID válido"
+                    }
                 }
+            ];
+        }
+
+        const sqlAlerta = `
+            SELECT
+                A.ALE_ID,
+                A.ALE_NOMBRE,
+                A.ALE_ASUNTO,
+                A.ALE_DESTINATARIO,
+                A.ALE_BODY,
+                A.ESTADO,
+                CASE
+                    WHEN A.ESTADO = 1 THEN 'Activo'
+                    WHEN A.ESTADO = 2 THEN 'Inactivo'
+                    ELSE 'Sin estado'
+                END AS ESTADO_TEXTO,
+                A.ID_ACTIVIDADXALERTA,
+                ACT.${C_ACT_NOMBRE} AS ACTIVIDAD_NOMBRE
+            FROM ${T_ALERTAS} A
+            LEFT JOIN ${T_ACTIVIDADES} ACT
+                ON ACT.${C_ACT_ID} = A.ID_ACTIVIDADXALERTA
+            WHERE A.ALE_ID = ?
+        `;
+
+        const sqlDestinatarios = `
+            SELECT
+                ID_ALERTAS_DESTINATARIO,
+                ALE_ID,
+                CORREO
+            FROM ${T_DESTINATARIOS}
+            WHERE ALE_ID = ?
+            ORDER BY CORREO ASC
+        `;
+
+        try {
+            const alertas = await tx.run(sqlAlerta, [aleId]);
+
+            if (!alertas || alertas.length === 0) {
+                return [
+                    {
+                        code: 404,
+                        data: {
+                            mensaje: "No se encontró la alerta"
+                        }
+                    }
+                ];
             }
+
+            const destinatarios = await tx.run(sqlDestinatarios, [aleId]);
+
+            return [
+                {
+                    code: 200,
+                    data: {
+                        ...alertas[0],
+                        DESTINATARIOS: destinatarios
+                    }
+                }
+            ];
         } catch (e) {
-            return { error: e.message, accion: "getListTipDocDisponibles", query: sql }
+            console.log("ERROR obtener alerta:", e);
+
+            return [
+                {
+                    code: 500,
+                    data: {
+                        accion: "obtener",
+                        mensaje: e.message
+                    }
+                }
+            ];
         }
-        return output;
-    };
-
-    this.on('getListTipDoc', async (req) => {
-        try {
-            const { idAlertas } = req.data;
-            return await getListTipDocDisponibles(idAlertas);
-        } catch (e) {
-            req.reject(500, e.message);
-        }
-    }); //getListTipDoc
-
-    async function deleteActividades(idAlertas) {
-        let sql;
-
-        try {
-            sql = `DELETE FROM DB_ACTIVIDADXALERTA WHERE ALE_ID = ?`;
-
-            await cds.run(sql, [idAlertas]);
-            return "OK";
-        } catch (e) {
-            return { error: e.message, accion: "deleteActividades", query: sql };
-        }
-    };
-
-    this.on('updateActividades', async (req) => {
-        const { idAlertas, actividades } = req.data.input;
-        const resp = await deleteActividades(idAlertas);
-
-        const sql = `INSERT INTO DB_ACTIVIDADXALERTA VALUES (?,?,?)`;
-
-        for (const item of actividades) {
-            const idAlertasTipDoc = await getSequence("ID_ACTIVIDADXALERTA");
-            await cds.run(sql, [idAlertasTipDoc, item.ID_ACTIVIDAD, idAlertas]);
-        }
-        return resp;
     });
 
-    async function getSelectedActividades(idAct, idAlertas) {
-        let sql;
+    this.on("crear", async (req) => {
+        const tx = db.tx(req);
+        const input = req.data.input || {};
 
-        try {
-            sql = `
-      SELECT COUNT(*) AS TOTAL
-      FROM DB_ACTIVIDADXALERTA
-      WHERE ID_ACTIVIDADES = ?
-        AND ALE_ID = ?`;
+        const validacion = validarPayload(input, false);
 
-            const result = await cds.run(sql, [idAct, idAlertas]);
-            const total = result[0].TOTAL;
-
-            return total > 0;
-        } catch (e) {
-            return false;
+        if (validacion.code !== 200) {
+            return [validacion];
         }
-    };
 
-    async function getListActividadesDisponibles(idAlertas) {
+        const aleNombre = String(input.ALE_NOMBRE).trim();
+        const aleAsunto = String(input.ALE_ASUNTO).trim();
+        const aleBody = String(input.ALE_BODY).trim();
+        const estado = input.ESTADO !== undefined && input.ESTADO !== null && input.ESTADO !== "" ? Number(input.ESTADO) : 1;
+        const idActividad = Number(input.ID_ACTIVIDADXALERTA);
+        const destinatarios = normalizarDestinatarios(input.DESTINATARIOS);
+        const aleDestinatario = destinatarios.length > 0 ? destinatarios[0].substring(0, 100) : "";
 
-        let sql
-        let output = [];
+        let sql = "";
 
         try {
-            sql = `SELECT
-           ID_ACTIVIDADES,
-           NOMBRE
-           FROM
-           DB_ACTIVIDADES
-           ORDER BY
-           NOMBRE ASC`;
+            const seqResp = await tx.run(`SELECT "${SEQ_ALERTA}".NEXTVAL AS ID FROM DUMMY`);
+            const aleId = Number(seqResp[0].ID);
 
-            const result = await cds.run(sql);
+            sql = `
+                INSERT INTO ${T_ALERTAS}
+                (
+                    ALE_ID,
+                    ALE_NOMBRE,
+                    ALE_ASUNTO,
+                    ALE_DESTINATARIO,
+                    ALE_BODY,
+                    ESTADO,
+                    ID_ACTIVIDADXALERTA
+                )
+                VALUES
+                (
+                    ?,
+                    ?,
+                    ?,
+                    ?,
+                    ?,
+                    ?,
+                    ?
+                )
+            `;
 
-            for (const glistact of result) {
-                let record = {};
-                record.ID_ACTIVIDAD = glistact.ID_ACTIVIDADES
-                record.ACTIVIDAD = glistact.NOMBRE
-                record.SELECTED = await getSelectedActividades(glistact.ID_ACTIVIDADES, idAlertas)
-                record.ID_ALERTA = idAlertas
+            await tx.run(sql, [
+                aleId,
+                aleNombre,
+                aleAsunto,
+                aleDestinatario,
+                aleBody,
+                estado,
+                idActividad
+            ]);
 
-                output.push(record);
+            for (const correo of destinatarios) {
+                sql = `
+                    INSERT INTO ${T_DESTINATARIOS}
+                    (
+                        ID_ALERTAS_DESTINATARIO,
+                        ALE_ID,
+                        CORREO
+                    )
+                    VALUES
+                    (
+                        ?,
+                        ?,
+                        ?
+                    )
+                `;
+
+                await tx.run(sql, [
+                    crypto.randomUUID(),
+                    aleId,
+                    correo
+                ]);
             }
+
+            await tx.commit();
+
+            return [
+                {
+                    code: 200,
+                    data: {
+                        mensaje: "Alerta creada correctamente",
+                        ALE_ID: aleId
+                    }
+                }
+            ];
         } catch (e) {
-            return { error: e.message, accion: "getListActividadesDisponibles", query: sql }
+            await tx.rollback();
+
+            console.log("ERROR crear alerta:", e);
+
+            return [
+                {
+                    code: 500,
+                    data: {
+                        accion: "crear",
+                        mensaje: e.message,
+                        query: sql
+                    }
+                }
+            ];
         }
-        return output;
-    };
+    });
 
-    this.on('getListActividades', async (req) => {
-        try {
-            const { idAlertas } = req.data;
-            return await getListActividadesDisponibles(idAlertas);
-        } catch (e) {
-            req.reject(500, e.message);
+    this.on("actualizar", async (req) => {
+        const tx = db.tx(req);
+        const input = req.data.input || {};
+
+        const validacion = validarPayload(input, true);
+
+        if (validacion.code !== 200) {
+            return [validacion];
         }
-    }); //getListActividades
 
-    async function deleteTipDoc(idAlertas) {
-        let sql;
+        const aleId = Number(input.ALE_ID || input.aleId || input.id);
+        const aleNombre = String(input.ALE_NOMBRE).trim();
+        const aleAsunto = String(input.ALE_ASUNTO).trim();
+        const aleBody = String(input.ALE_BODY).trim();
+        const estado = input.ESTADO !== undefined && input.ESTADO !== null && input.ESTADO !== "" ? Number(input.ESTADO) : 1;
+        const idActividad = Number(input.ID_ACTIVIDADXALERTA);
+        const destinatarios = normalizarDestinatarios(input.DESTINATARIOS);
+        const aleDestinatario = destinatarios.length > 0 ? destinatarios[0].substring(0, 100) : "";
+
+        let sql = "";
 
         try {
+            const existe = await tx.run(
+                `
+                    SELECT ALE_ID
+                    FROM ${T_ALERTAS}
+                    WHERE ALE_ID = ?
+                `,
+                [aleId]
+            );
+
+            if (!existe || existe.length === 0) {
+                await tx.rollback();
+
+                return [
+                    {
+                        code: 404,
+                        data: {
+                            mensaje: "No se encontró la alerta que intenta actualizar"
+                        }
+                    }
+                ];
+            }
+
             sql = `
-        DELETE FROM
-        DB_TIPODOCUMENTOXALERTA
-        WHERE ALE_ID = ?`;
+                UPDATE ${T_ALERTAS}
+                SET
+                    ALE_NOMBRE = ?,
+                    ALE_ASUNTO = ?,
+                    ALE_DESTINATARIO = ?,
+                    ALE_BODY = ?,
+                    ESTADO = ?,
+                    ID_ACTIVIDADXALERTA = ?
+                WHERE ALE_ID = ?
+            `;
 
-            await cds.run(sql, [idAlertas]);
+            await tx.run(sql, [
+                aleNombre,
+                aleAsunto,
+                aleDestinatario,
+                aleBody,
+                estado,
+                idActividad,
+                aleId
+            ]);
 
-            return "OK";
+            sql = `
+                DELETE FROM ${T_DESTINATARIOS}
+                WHERE ALE_ID = ?
+            `;
+
+            await tx.run(sql, [aleId]);
+
+            for (const correo of destinatarios) {
+                sql = `
+                    INSERT INTO ${T_DESTINATARIOS}
+                    (
+                        ID_ALERTAS_DESTINATARIO,
+                        ALE_ID,
+                        CORREO
+                    )
+                    VALUES
+                    (
+                        ?,
+                        ?,
+                        ?
+                    )
+                `;
+
+                await tx.run(sql, [
+                    crypto.randomUUID(),
+                    aleId,
+                    correo
+                ]);
+            }
+
+            await tx.commit();
+
+            return [
+                {
+                    code: 200,
+                    data: {
+                        mensaje: "Alerta actualizada correctamente",
+                        ALE_ID: aleId
+                    }
+                }
+            ];
         } catch (e) {
-            return { error: e.message, accion: "deleteTipDoc", query: sql }
-        }
-    };
+            await tx.rollback();
 
-    this.on('updateTipDoc', async (req) => {
-        const { idAlertas, tipDocs } = req.data.input;
-        const resp = await deleteTipDoc(idAlertas);
+            console.log("ERROR actualizar alerta:", e);
+
+            return [
+                {
+                    code: 500,
+                    data: {
+                        accion: "actualizar",
+                        mensaje: e.message,
+                        query: sql
+                    }
+                }
+            ];
+        }
+    });
+
+    this.on("eliminar", async (req) => {
+        const tx = db.tx(req);
+        const input = req.data.input || {};
+        const aleId = Number(input.ALE_ID || input.aleId || input.id);
+
+        if (!aleId || Number.isNaN(aleId)) {
+            return [
+                {
+                    code: 400,
+                    data: {
+                        mensaje: "Debe enviar ALE_ID válido"
+                    }
+                }
+            ];
+        }
+
+        let sql = "";
+
+        try {
+            const existe = await tx.run(
+                `
+                    SELECT ALE_ID
+                    FROM ${T_ALERTAS}
+                    WHERE ALE_ID = ?
+                `,
+                [aleId]
+            );
+
+            if (!existe || existe.length === 0) {
+                await tx.rollback();
+
+                return [
+                    {
+                        code: 404,
+                        data: {
+                            mensaje: "No se encontró la alerta que intenta eliminar"
+                        }
+                    }
+                ];
+            }
+
+            sql = `
+                DELETE FROM ${T_DESTINATARIOS}
+                WHERE ALE_ID = ?
+            `;
+
+            await tx.run(sql, [aleId]);
+
+            sql = `
+                DELETE FROM ${T_ALERTAS}
+                WHERE ALE_ID = ?
+            `;
+
+            await tx.run(sql, [aleId]);
+
+            await tx.commit();
+
+            return [
+                {
+                    code: 200,
+                    data: {
+                        mensaje: "Alerta eliminada correctamente",
+                        ALE_ID: aleId
+                    }
+                }
+            ];
+        } catch (e) {
+            await tx.rollback();
+
+            console.log("ERROR eliminar alerta:", e);
+
+            return [
+                {
+                    code: 500,
+                    data: {
+                        accion: "eliminar",
+                        mensaje: e.message,
+                        query: sql
+                    }
+                }
+            ];
+        }
+    });
+
+    this.on("actividades", async (req) => {
+        const tx = db.tx(req);
 
         const sql = `
-        INSERT INTO DB_TIPODOCUMENTOXALERTA VALUES (?,?,?)`;
+            SELECT
+                ID_ACTIVIDADES,
+                NOMBRE,
+                ID_ACCION
+            FROM ${T_ACTIVIDADES}
+            ORDER BY NOMBRE ASC
+        `;
 
-        for (const item of tipDocs) {
-            const idAlertasTipDoc = await getSequence("ID_TIPODOCUMENTOXALERTA");
-            await cds.run(sql, [idAlertasTipDoc, item.ID_TIPO_DOCUMENTO, idAlertas]);
-        }
-        return resp;
-    });
-
-    async function deleteRolesTD(idRol) {
-        let sql;
         try {
-            sql = `DELETE FROM DB_ROLESXTD WHERE ID_ROLES = ?`;
-            await cds.run(sql, [idRol]);
+            const data = await tx.run(sql);
 
-            return "OK";
+            return [
+                {
+                    code: 200,
+                    data
+                }
+            ];
         } catch (e) {
-            return { error: e.message, accion: "deleteRolesTD", query: sql }
+            console.log("ERROR actividades:", e);
+
+            return [
+                {
+                    code: 500,
+                    data: {
+                        accion: "actividades",
+                        mensaje: e.message,
+                        query: sql
+                    }
+                }
+            ];
         }
-    };
-
-    this.on('updateTD', async (req) => {
-        const { idRol, tipos } = req.data.input;
-
-        const resp = await deleteRolesTD(idRol);
-
-        const sql = `INSERT INTO DB_ROLESXTD 
-        (ID_ROLESXTD, ID_ROLES, ID_TIPO_DOCUMENTO)
-        VALUES (?, ?, ?)`;
-
-        for (const t of tipos) {
-            const id_tipo_doc = t.ID_TIPO_DOCUMENTO;
-            const idRolesTD = await getSequence2("ID_ROLESXTD");
-            await cds.run(sql, [idRolesTD, idRol, id_tipo_doc]);
-        }
-
-        return resp;
     });
 
+    function validarPayload(input, requiereId) {
+        const aleId = Number(input.ALE_ID || input.aleId || input.id);
+        const aleNombre = input.ALE_NOMBRE !== undefined && input.ALE_NOMBRE !== null ? String(input.ALE_NOMBRE).trim() : "";
+        const aleAsunto = input.ALE_ASUNTO !== undefined && input.ALE_ASUNTO !== null ? String(input.ALE_ASUNTO).trim() : "";
+        const aleBody = input.ALE_BODY !== undefined && input.ALE_BODY !== null ? String(input.ALE_BODY).trim() : "";
+        const estado = input.ESTADO !== undefined && input.ESTADO !== null && input.ESTADO !== "" ? Number(input.ESTADO) : 1;
+        const idActividad = Number(input.ID_ACTIVIDADXALERTA);
+        const destinatarios = normalizarDestinatarios(input.DESTINATARIOS);
+
+        if (requiereId && (!aleId || Number.isNaN(aleId))) {
+            return {
+                code: 400,
+                data: {
+                    campo: "ALE_ID",
+                    mensaje: "Debe enviar ALE_ID válido"
+                }
+            };
+        }
+
+        if (!aleNombre) {
+            return {
+                code: 400,
+                data: {
+                    campo: "ALE_NOMBRE",
+                    mensaje: "Debe ingresar el nombre de la alerta"
+                }
+            };
+        }
+
+        if (aleNombre.length > 100) {
+            return {
+                code: 400,
+                data: {
+                    campo: "ALE_NOMBRE",
+                    mensaje: "El nombre no puede superar los 100 caracteres"
+                }
+            };
+        }
+
+        if (!aleAsunto) {
+            return {
+                code: 400,
+                data: {
+                    campo: "ALE_ASUNTO",
+                    mensaje: "Debe ingresar el asunto"
+                }
+            };
+        }
+
+        if (aleAsunto.length > 100) {
+            return {
+                code: 400,
+                data: {
+                    campo: "ALE_ASUNTO",
+                    mensaje: "El asunto no puede superar los 100 caracteres"
+                }
+            };
+        }
+
+        if (!/^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9 ]+$/.test(aleAsunto)) {
+            return {
+                code: 400,
+                data: {
+                    campo: "ALE_ASUNTO",
+                    mensaje: "El asunto solo debe contener letras, números y espacios"
+                }
+            };
+        }
+
+        if (!aleBody) {
+            return {
+                code: 400,
+                data: {
+                    campo: "ALE_BODY",
+                    mensaje: "Debe ingresar el mensaje"
+                }
+            };
+        }
+
+        if (aleBody.length > 5000) {
+            return {
+                code: 400,
+                data: {
+                    campo: "ALE_BODY",
+                    mensaje: "El mensaje no puede superar los 5000 caracteres"
+                }
+            };
+        }
+
+        if (![1, 2].includes(estado)) {
+            return {
+                code: 400,
+                data: {
+                    campo: "ESTADO",
+                    mensaje: "El estado debe ser 1 Activo o 2 Inactivo"
+                }
+            };
+        }
+
+        if (!idActividad || Number.isNaN(idActividad)) {
+            return {
+                code: 400,
+                data: {
+                    campo: "ID_ACTIVIDADXALERTA",
+                    mensaje: "Debe seleccionar una actividad válida"
+                }
+            };
+        }
+
+        if (!Array.isArray(destinatarios) || destinatarios.length === 0) {
+            return {
+                code: 400,
+                data: {
+                    campo: "DESTINATARIOS",
+                    mensaje: "Debe ingresar al menos un destinatario"
+                }
+            };
+        }
+
+        for (const correo of destinatarios) {
+            if (!validarCorreo(correo)) {
+                return {
+                    code: 400,
+                    data: {
+                        campo: "DESTINATARIOS",
+                        mensaje: `El correo ${correo} no es válido`
+                    }
+                };
+            }
+        }
+
+        return {
+            code: 200,
+            data: {
+                mensaje: "Validación correcta"
+            }
+        };
+    }
+
+    function normalizarDestinatarios(destinatarios) {
+        if (!Array.isArray(destinatarios)) {
+            return [];
+        }
+
+        return destinatarios
+            .map((item) => {
+                if (typeof item === "string") {
+                    return item.trim().toLowerCase();
+                }
+
+                if (item && item.CORREO) {
+                    return String(item.CORREO).trim().toLowerCase();
+                }
+
+                if (item && item.correo) {
+                    return String(item.correo).trim().toLowerCase();
+                }
+
+                return "";
+            })
+            .filter((correo, index, array) => correo && array.indexOf(correo) === index);
+    }
+
+    function validarCorreo(correo) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
+    }
 });

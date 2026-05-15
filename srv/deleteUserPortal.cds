@@ -4,5 +4,5 @@ service deleteUserPortal {
     @open
     type object {};
     
-    action delete(input: object)   returns object;
+    action delete(input: object)   returns String;
 }

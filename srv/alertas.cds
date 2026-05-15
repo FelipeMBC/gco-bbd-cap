@@ -4,14 +4,15 @@ service alertas {
     @open
     type object {};
 
-    action update(input: object)                          returns object;
-    action updateActividades(input: object)               returns object;
-    action updateTipDoc(input: object)                    returns object;
-    
-    function getListPortales(idAlertas: Integer)          returns array of object;
-    function getListCantPortales(idAlertas: Integer)      returns object;
-    function getListActividades(idAlertas: Integer)       returns array of object;
-    function getListTipDoc(idAlertas: Integer)            returns array of object;
+    action listar(input: object) returns array of object;
 
-   
-};
+    action obtener(input: object) returns array of object;
+
+    action crear(input: object) returns array of object;
+
+    action actualizar(input: object) returns array of object;
+
+    action eliminar(input: object) returns array of object;
+
+    action actividades(input: object) returns array of object;
+}

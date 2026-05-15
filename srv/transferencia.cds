@@ -4,7 +4,7 @@ service transferencia {
     @open
     type object {};
     
-    action createTransferencia (input: object)       returns object;
+    action createTransferencia(json: object)       returns object;
 
 
 }

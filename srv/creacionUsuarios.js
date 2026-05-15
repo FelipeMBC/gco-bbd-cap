@@ -8,7 +8,7 @@ const cds = require("@sap/cds");
 module.exports = cds.service.impl(async function () {
     const db = await cds.connect.to("db");
 
-    this.before("CREATE","TAG", async (req) => {
+    this.before("CREATE", "TAG", async (req) => {
         const rs = await cds.run(`SELECT "ID_TAG".NEXTVAL AS NEXT_ID FROM DUMMY`);
         req.data.ID_TAG = rs[0].NEXT_ID;
     });
@@ -63,12 +63,12 @@ module.exports = cds.service.impl(async function () {
         req.data.ID_NODOSXPERFILES = rs[0].NEXT_ID;
     });
 
-    this.before("CREATE","DETALLE_VISUALIZACION", async (req) => {
+    this.before("CREATE", "DETALLE_VISUALIZACION", async (req) => {
         const rs = await cds.run(`SELECT "ID_DETALLE_VISUALIZACION".NEXTVAL AS NEXT_ID FROM DUMMY`);
         req.data.ID_DETALLE_VISUALIZACION = rs[0].NEXT_ID;
     });
 
-    this.before("CREATE","SUPLENTE", async (req) => {
+    this.before("CREATE", "SUPLENTE", async (req) => {
         const rs = await cds.run(`SELECT "ID_SUPLENTE".NEXTVAL AS NEXT_ID FROM DUMMY`);
         req.data.ID_SUPLENTE = rs[0].NEXT_ID;
     });
@@ -91,7 +91,7 @@ module.exports = cds.service.impl(async function () {
     this.before("CREATE", "PROP_TIPO_DOC", async (req) => {
         const rs = await cds.run(`SELECT "ID_PROPIEDAD".NEXTVAL AS NEXT_ID FROM DUMMY`);
         req.data.ID_PROPIEDAD = rs[0].NEXT_ID;
-         
+
     });
 
     this.before("CREATE", "FAVORITOS", async (req) => {
@@ -99,37 +99,37 @@ module.exports = cds.service.impl(async function () {
         req.data.ID_FAVORITOS = rs[0].NEXT_ID;
     });
 
-    this.before("CREATE","METADATA", async (req) =>{
+    this.before("CREATE", "METADATA", async (req) => {
         const rs = await cds.run(`SELECT "ID_METADATA".NEXTVAL AS NEXT_ID FROM DUMMY`);
         req.data.ID_METADATA = rs[0].NEXT_ID;
     });
 
-    this.before("CREATE","NODOBUSQUEDA", async (req) =>{
+    this.before("CREATE", "NODOBUSQUEDA", async (req) => {
         const rs = await cds.run(`SELECT "ID_BUSQUEDA".NEXTVAL AS NEXT_ID FROM DUMMY`);
         req.data.ID_BUSQUEDA = rs[0].NEXT_ID;
     });
 
-    this.before("CREATE","PORTALES", async (req) => {
+    this.before("CREATE", "PORTALES", async (req) => {
         const rs = await cds.run(`SELECT "ID_SEQ_PORTAL".NEXTVAL AS NEXT_ID FROM DUMMY`);
         req.data.ID_SEQ_PORTAL = rs[0].NEXT_ID;
     });
 
-    this.before("CREATE","RECIENTES", async (req) => {
+    this.before("CREATE", "RECIENTES", async (req) => {
         const rs = await cds.run(`SELECT "ID_RECIENTES".NEXTVAL AS NEXT_ID FROM DUMMY`);
         req.data.ID_RECIENTES = rs[0].NEXT_ID;
     });
 
-    this.before("CREATE","VISITAS", async (req) => {
+    this.before("CREATE", "VISITAS", async (req) => {
         const rs = await cds.run(`SELECT "ID_VISITAS".NEXTVAL AS NEXT_ID FROM DUMMY`);
         req.data.ID_VISITAS = rs[0].NEXT_ID;
     });
 
-    this.before("CREATE","TIPO_DOCUMENTO", async (req) => {
+    this.before("CREATE", "TIPO_DOCUMENTO", async (req) => {
         const rs = await cds.run(`SELECT "ID_TIPO_DOCUMENTO".NEXTVAL AS NEXT_ID FROM DUMMY`);
         req.data.ID_TIPO_DOCUMENTO = rs[0].NEXT_ID;
     });
 
-    this.before("CREATE","QUERY_MSAP_CATEGORIA", async (req) => {
+    this.before("CREATE", "QUERY_MSAP_CATEGORIA", async (req) => {
         const rs = await cds.run(`SELECT "ID_QUERY".NEXTVAL AS NEXT_ID FROM DUMMY`);
         req.data.ID_QUERY = rs[0].NEXT_ID;
     });
@@ -143,6 +143,57 @@ module.exports = cds.service.impl(async function () {
         const rs = await cds.run(`SELECT "ID_TAGXPORTAL".NEXTVAL AS NEXT_ID FROM DUMMY`);
         req.data.ID_TAGXPORTAL = rs[0].NEXT_ID;
     });
+
+    this.before("CREATE", "TRANSFERENCIA", async (req) => {
+        const rs = await cds.run(`SELECT "ID_TRANSFERENCIA".NEXTVAL AS NEXT_ID FROM DUMMY`);
+        req.data.ID_TRANSFERENCIA = rs[0].NEXT_ID;
+    });
+
+    this.before("CREATE", "OBJETO_TRANSFERENCIA", async (req) => {
+        const rs = await cds.run(`SELECT "ID_OBJETO_TRANSFERENCIA".NEXTVAL AS NEXT_ID FROM DUMMY`);
+        req.data.ID_OBJETO_TRANSFERENCIA = rs[0].NEXT_ID;
+    });
+
+    this.before("CREATE", "FILTRO", async (req) => {
+        const rs = await cds.run(`SELECT "ID_FILTRO".NEXTVAL AS NEXT_ID FROM DUMMY`);
+        req.data.ID_FILTRO = rs[0].NEXT_ID;
+    });
+
+    this.before("CREATE", "CONSULTA_TRANSFERENCIA", async (req) => {
+        const rs = await cds.run(`SELECT "ID_CONSULTA_TRANSFERENCIA".NEXTVAL AS NEXT_ID FROM DUMMY`);
+        req.data.ID_CONSULTA = rs[0].NEXT_ID;
+    });
+
+    this.before("CREATE", "FIELD_CONSULTA_TRANSFERENCIA", async (req) => {
+        const rs = await cds.run(`SELECT "ID_FIELD_CONSULTA_TRANSFERENCIA".NEXTVAL AS NEXT_ID FROM DUMMY`);
+        req.data.ID_FIELD_CONSULTA_TRANSFERENCIA = rs[0].NEXT_ID;
+    });
+
+    this.before("CREATE", "JOIN_CONSULTA_TRANSFERENCIA", async (req) => {
+        const rs = await cds.run(`SELECT "ID_JOIN_CONSULTA_TRANSFERENCIA".NEXTVAL AS NEXT_ID FROM DUMMY`);
+        req.data.ID_JOIN_CONSULTA_TRANSFERENCIA = rs[0].NEXT_ID;
+    });
+
+    this.before("CREATE", "CONDICION_CONSULTA_TRANSFERENCIA", async (req) => {
+        const rs = await cds.run(`SELECT "ID_CONDICION_CONSULTA_TRANSFERENCIA".NEXTVAL AS NEXT_ID FROM DUMMY`);
+        req.data.ID_CONDICION_CONSULTA_TRANSFERENCIA = rs[0].NEXT_ID;
+    });
+
+    this.before("CREATE", "METADATA_TRANSFERENCIA", async (req) => {
+        const rs = await cds.run(`SELECT "ID_METADATA_TRANSFERENCIA".NEXTVAL AS NEXT_ID FROM DUMMY`);
+        req.data.ID_METADATA_TRANSFERENCIA = rs[0].NEXT_ID;
+    });
+
+    this.before("CREATE", "METADATA_JOIN", async (req) => {
+        const rs = await cds.run(`SELECT "ID_METADATA_JOIN".NEXTVAL AS NEXT_ID FROM DUMMY`);
+        req.data.ID_METADATA_JOIN = rs[0].NEXT_ID;
+    });
+
+    this.before("CREATE", "METADATA_CONDICION", async (req) => {
+        const rs = await cds.run(`SELECT "ID_METADATA_CONDICION".NEXTVAL AS NEXT_ID FROM DUMMY`);
+        req.data.ID_METADATA_CONDICION = rs[0].NEXT_ID;
+    });
+
 
     async function getAccionesRol(idRol) {
         let retorno = [];

@@ -645,7 +645,7 @@ module.exports = cds.service.impl(async function () {
     }
   });
 
-  this.on('getTDocs', async (req) => {
+  this.on('getTDoc', async (req) => {
     const { idApp, idProceso } = req.data;
     let sql;
     let outPut = [];

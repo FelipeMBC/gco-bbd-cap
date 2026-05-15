@@ -1,33 +1,13 @@
-  //////////////////////
-  ///////SETIMGPORTAL////
-  ///////////////////////
+//////////////////////
+///////SETIMGPORTAL////
+///////////////////////
 
-  const cds = require("@sap/cds");
+const cds = require("@sap/cds");
+const req = require("express/lib/request");
+const res = require("express/lib/response");
 
-  module.exports = cds.service.impl(async function () {
-    const db = await cds.connect.to("db");
-
-  async function getArchivoImg(idDocumento) {
-    let sql;
-    let outPut = [];
-
-    try {
-      sql = `SELECT URL, TITULO FROM DB_DETALLE
-               WHERE ID_CATEGORIA_HOJA = ?`;
-
-      const result = await cds.run(sql, [idDocumento]);
-      for (const ga of result) {
-        let record = {};
-        record.URL_ADJUNTO = ga.URL;
-        record.TITULO = ga.TITULO;
-
-        outPut.push(record);
-      }
-    } catch (e) {
-      return { error: e.message, accion: "getArchivoImg", query: sql }
-    }
-    return outPut;
-  };
+module.exports = cds.service.impl(async function () {
+  const db = await cds.connect.to("db");
 
   async function getImgBanner(nombreArchivo, idPadre) {
     let sql;
@@ -95,17 +75,32 @@
     return outPut;
   };
 
-  this.on('getData31', async (req) => {
-
+  this.on('get', async (req) => {
     const { nombreArchivo, idPadre } = req.data.input;
     const visualizadores = await getImg(nombreArchivo, idPadre);
     return visualizadores;
   });
 
-  this.on('getDataUrlImen', async (req) => {
-    const { idDocumento } = req.data.input;
-    const visualizadores = await getArchivoImg(idDocumento);
-    return visualizadores;
+  this.on('getBreadCrumbs', async (req) => {
+    const { idPadre } = req.data;
+    let sql, record;
+    let outPut = [];
+
+    try{
+      sql = "SELECT BREADCRUMS FROM DB_CATEGORIA WHERE ID_CATEGORIA = ?";
+      const result = await cds.run(sql, [idPadre]); 
+      for (const rs of result){
+        let record;
+        record = rs.BREADCRUMS;
+
+        outPut.push(record);
+      }
+      
+    }catch(e){
+      return { error: e.message, accion: "getBreadCrumbs", query: sql }
+    }
+    return outPut;;
+
   });
 
 });
