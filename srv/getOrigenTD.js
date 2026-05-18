@@ -31,8 +31,8 @@
     return record;
   };
 
-  this.on('getData17', async (req) => {
-    const { tipoDocumento } = req.data.input;
+  this.on('get', async (req) => {
+    const { tipoDocumento } = req.data;
     const visualizadores = await getOrigen(tipoDocumento);
     return visualizadores;
   });

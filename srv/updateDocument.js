@@ -33,8 +33,8 @@
     return outPut;
   };
 
-  this.on('getNodoData', async (req) => {
-    const { idCat } = req.data.input;
+  this.on('getNodo', async (req) => {
+    const { idCat } = req.data;
     const rsp = await getNombreDocumento(idCat)
 
     return rsp;

@@ -34,7 +34,7 @@
     return outPut;
   };
 
-  this.on('getData5', async (req) => {
+  this.on('get', async () => {
     const visualizadores = await getFormato();
     return visualizadores;
   });

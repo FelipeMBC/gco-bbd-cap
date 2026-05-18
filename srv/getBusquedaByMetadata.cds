@@ -4,5 +4,5 @@ service getBusquedaByMetadata {
     @open
     type object {};
     
-    action update(input: object)   returns object;
+    function update(ND: String)   returns object;
 }

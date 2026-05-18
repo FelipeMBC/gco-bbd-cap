@@ -1,11 +1,11 @@
-  ///////////////////
-  ///////GETPADRE////
-  ///////////////////
+///////////////////
+///////GETPADRE////
+///////////////////
 
-  const cds = require("@sap/cds");
+const cds = require("@sap/cds");
 
-  module.exports = cds.service.impl(async function () {
-    const db = await cds.connect.to("db");
+module.exports = cds.service.impl(async function () {
+  const db = await cds.connect.to("db");
 
   async function getInfoCategoria4(idPadre) {
     let sql;
@@ -40,11 +40,7 @@
     let sql;
     let record = "";
     try {
-      sql = `
-      SELECT DISTINCT NODO_HIJO
-      FROM DB_DETALLE
-      WHERE ID_CATEGORIA_HOJA = ? AND ID_TIPO_DOCUMENTO = ?
-    `;
+      sql = `SELECT DISTINCT NODO_HIJO FROM DB_DETALLE WHERE ID_CATEGORIA_HOJA = ? AND ID_TIPO_DOCUMENTO = ?`;
       const result = await cds.run(sql, [idDocumento, idTipoDocumento]);
 
       for (const gcat of result) {
@@ -56,26 +52,24 @@
     return record;
   };
 
-  this.on('deleteDetalle', async (req) => {
+  this.on('delete', async (req) => {
     const { idDocumento, idTipoDocumento } = req.data.input
     let sql;
     try {
       const idCategoria = await getCategoria(idDocumento, idTipoDocumento);
 
       sql = `
-      DELETE FROM DB_DETALLE
-      WHERE ID_CATEGORIA_HOJA = ? AND ID_TIPO_DOCUMENTO = ?
-    `;
+      DELETE FROM DB_DETALLE WHERE ID_CATEGORIA_HOJA = ? AND ID_TIPO_DOCUMENTO = ?`;
       await cds.run(sql, [idDocumento, idTipoDocumento]);
 
-      return idCategoria; //Se elimino
+      return idCategoria; //Se eliminó
     } catch (e) {
       return "FALLO";
     }
   });
 
-  this.on('getData18', async (req) => {
-    const { idPadre } = req.data.input;
+  this.on('get', async (req) => {
+    const { idPadre } = req.data;
     const visualizadores = await getInfoCategoria4(idPadre);
     return visualizadores;
   });
@@ -105,7 +99,7 @@
   };
 
   this.on('getTD', async (req) => {
-    const { idPadre } = req.data.input;
+    const { idPadre } = req.data;
     let sql;
     let record = false;
 
@@ -125,8 +119,8 @@
     return record;
   });
 
-  this.on('getDataEspejo', async (req) => {
-    const { idPadre } = req.data.input;
+  this.on('getEspejo', async (req) => {
+    const { idPadre } = req.data;
     const visualizadores = await getEspejo(idPadre);
 
     return visualizadores;

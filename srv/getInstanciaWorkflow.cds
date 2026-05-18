@@ -4,8 +4,6 @@ service getInstanciaWorkflow {
     @open
     type object {};
 
-    
-    action getUpdateDate(input: object) returns object;
-
-    function getData8(input: object) returns object;
+    action update(input: object)             returns object;
+    function get(tipoDocumento: Integer)     returns object;
 }

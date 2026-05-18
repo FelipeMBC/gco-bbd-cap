@@ -26,10 +26,73 @@ module.exports = cds.service.impl(async function () {
                 outPut.push(record);
             }
         } catch (e) {
-            return { error: e.message, accion: "getUserAprobador", query: sql};
+            return { error: e.message, accion: "getUserAprobador", query: sql };
         }
         return outPut;
     };
+
+    function orderFecha(fecha) {
+        if (!fecha) return fecha;
+
+        const value = String(fecha).split("T")[0];
+
+        if (!value.includes("-")) return value;
+
+        const [year, month, day] = value.split("-");
+        return `${day}-${month}-${year}`;
+    }
+
+    async function getSuplentes() {
+        let sql;
+        const outPut = [];
+
+        try {
+            sql = `SELECT
+            ID_SUPLENTE,
+            USUARIO_TITULAR,
+            USUARIO_REEMPLAZO,
+            FECHA_INICIO,
+            FECHA_TERMINO,
+            ID_USUARIO_SUPLENTE,
+            ID_EST_LIB,
+            ID_USUARIO_TITULAR FROM DB_SUPLENTE WHERE ESTADO = 1`;
+
+            const result = await cds.run(sql);
+
+            for (const rs of result) {
+                const fechaActual = new Date();
+                const fechaTermino = new Date(rs.FECHA_TERMINO);
+                const resultado = fechaActual.getTime() < fechaTermino.getTime();
+
+                if (resultado) {
+                    const record = {};
+
+                    record.USUARIO_TITULAR = rs.USUARIO_TITULAR;
+                    record.USUARIO_REEMPLAZO = rs.USUARIO_REEMPLAZO;
+                    record.FECHA_INICIO = orderFecha(rs.FECHA_INICIO);
+                    record.FECHA_TERMINO = orderFecha(rs.FECHA_TERMINO);
+                    record.ID_USUARIO_SUPLENTE = rs.ID_USUARIO_SUPLENTE;
+                    record.ID_EST_LIB = rs.ID_EST_LIB;
+                    record.ID_USUARIO_TITULAR = rs.ID_USUARIO_TITULAR;
+                    record.ID_SUPLENTE = rs.ID_SUPLENTE;
+
+                    outPut.push(record);
+                } else {
+                    const sqlUpdate = `UPDATE DB_SUPLENTE SET ESTADO = 2 WHERE ID_SUPLENTE = ?`;
+                    await cds.run(sqlUpdate, [rs.ID_SUPLENTE]);
+                }
+            }
+
+            return outPut;
+
+        } catch (e) {
+            return {error: e.message, accion: "getSuplentes", query: sql};
+        }
+    }
+
+    this.on("getSuplentes", async () => {
+        return await getSuplentes();
+    });
 
     this.on('getTD', async () => {
         let sql;
@@ -54,7 +117,7 @@ module.exports = cds.service.impl(async function () {
 
             }
         } catch (e) {
-            return { error: e.message, accion: "getTD", query: sql};
+            return { error: e.message, accion: "getTD", query: sql };
         }
         return outPut;
     });
@@ -90,7 +153,7 @@ module.exports = cds.service.impl(async function () {
                 }
             }
         } catch (e) {
-            return { error: e.message, accion: "getNivel", query: sql};
+            return { error: e.message, accion: "getNivel", query: sql };
         }
 
         return outPut;

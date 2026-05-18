@@ -40,8 +40,8 @@
     return outPut;
   };
 
-  this.on('getData6', async (req) => {
-    const { idTipoDocumento } = req.data.input;
+  this.on('get', async (req) => {
+    const { idTipoDocumento } = req.data;
     const visualizadores = await getFormatosPermitidos(idTipoDocumento);
     return visualizadores;
   });

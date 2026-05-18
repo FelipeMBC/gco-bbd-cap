@@ -684,13 +684,13 @@ module.exports = cds.service.impl(async function () {
     return visualizadores;
   });
 
-  this.on('getDataDocObl', async (req) => {
-    const { tipoDocumento } = req.data.input;
+  this.on('getDocObl', async (req) => {
+    const { tipoDocumento } = req.data;
     const visualizadores = await getDocObl(tipoDocumento);
     return visualizadores;
   });
 
-  this.on('getDataTag', async (req) => {
+  this.on('getTag', async (req) => {
     const { tipoDocumento } = req.data.input;
     const visualizadores = await getTag(tipoDocumento);
     return visualizadores;
@@ -730,15 +730,18 @@ module.exports = cds.service.impl(async function () {
 
   async function getCantSelect(cond, td) {
     let cant = 0;
+    let sql;
+
     try {
       const lt = cond.indexOf('~');
       cond = cond.slice(0, lt + 1);
 
-      const sql = `
-     SELECT DISTINCT ZFIELDNAME
-     FROM DB_QUERY_MSAP_CATEGORIA 
-     WHERE ID_TIPO_DOCUMENTO = ? 
-     AND ZCONDICION LIKE ?`;
+      sql = `
+      SELECT DISTINCT ZFIELDNAME
+      FROM DB_QUERY_MSAP_CATEGORIA 
+      WHERE ID_TIPO_DOCUMENTO = ? 
+        AND ZCONDICION LIKE ?
+    `;
 
       const result = await cds.run(sql, [td, `%${cond}%`]);
 
@@ -747,10 +750,17 @@ module.exports = cds.service.impl(async function () {
       }
 
     } catch (e) {
-      return { error: e.message, accion: "getCantSelect", query: sql, cant: cant }
+      return {
+        error: e.message,
+        accion: "getCantSelect",
+        query: sql,
+        cant: cant
+      };
     }
+
     return cant;
-  };
+  }
+
 
   async function getListaFormatos(tipoDocumento) {
     let sql;
@@ -820,13 +830,13 @@ module.exports = cds.service.impl(async function () {
     return outPut;
   };
 
-  this.on('getDataMDSAP', async (req) => {
-    const { tipoDocumento } = req.data.input;
+  this.on('getMDSAP', async (req) => {
+    const { tipoDocumento } = req.data;
     const visualizadores = await getMDSAP(tipoDocumento);
     return visualizadores;
   });
 
-  this.on('getDataListaFormatos', async (req) => {
+  this.on('getListaFormatos', async (req) => {
     const { tipoDocumento } = req.data.input;
     let sql;
     let outPut = [];
@@ -844,6 +854,7 @@ module.exports = cds.service.impl(async function () {
       WHERE QUERY.ID_TIPO_DOCUMENTO = ?
     `;
       const result = await cds.run(sql, [tipoDocumento]);
+      console.log(result)
 
       for (const gdalis of result) {
         const record = {};

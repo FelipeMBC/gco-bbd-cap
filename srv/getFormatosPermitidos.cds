@@ -4,6 +4,6 @@ service getFormatosPermitidos {
     @open
     type object {};
 
-    action getData6(input: object) returns object;
+    function get(idTipoDocumento: Integer)   returns array of object;
 
 }

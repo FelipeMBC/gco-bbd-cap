@@ -84,8 +84,8 @@
     return outPut;
   };
 
-  this.on('getData22', async (req) => {
-    const { idCategoria } = req.data.input;
+  this.on('get', async (req) => {
+    const { idCategoria } = req.data;
     let idCat = await getIdCategoria1(idCategoria);
     const visualizadores = await getPF1(idCat);
 

@@ -1,88 +1,106 @@
-  
-  /////////////////////////
-  //getBusquedaByMetadata//
-  /////////////////////////
 
-  const cds = require("@sap/cds");
+/////////////////////////
+//getBusquedaByMetadata//
+/////////////////////////
 
-  module.exports = cds.service.impl(async function () {
-    const db = await cds.connect.to("db");
+const cds = require("@sap/cds");
+
+module.exports = cds.service.impl(async function () {
+  const db = await cds.connect.to("db");
+
+  function orderFecha(fecha) {
+    let newFecha = fecha.split("-")[2] + "-" + fecha.split("-")[1] + "-" + fecha.split("-")[0];
+    return newFecha;
+  };
 
   async function getIdDocumento(nombreArchivo) {
     let sql;
     let sValue = [];
 
     try {
-
-      sql = `
-        SELECT DOC.ID_DOCUMENTO, DOC.ID_TIPO_DOCUMENTO 
-        FROM DB_DOCUMENTO DOC 
-        WHERE DOC.NOMBRE = ?`;
+      sql = `SELECT DOC.ID_DOCUMENTO,
+                    DOC.ID_TIPO_DOCUMENTO
+                  FROM DB_DOCUMENTO AS DOC
+                  WHERE DOC.NOMBRE = ?`;
 
       const result = await cds.run(sql, [nombreArchivo]);
-
-      for (const gtiddoc of result) {
+      for (const rs of result) {
         let record = {};
-        record.ID_DOCUMENTO = gtiddoc.ID_DOCUMENTO;
-        record.ID_TIPO_DOCUMENTO = gtiddoc.ID_TIPO_DOCUMENTO;
+        record.ID_DOCUMENTO = rs.ID_DOCUMENTO;
+        record.ID_TIPO_DOCUMENTO = rs.ID_TIPO_DOCUMENTO;;
 
         sValue.push(record);
       }
-
     } catch (e) {
-      return { error: e.message, accion: "getIdDocumento", query: sql }
+      return { error: e.message, accion: getIdDocumento, query: sql }
     }
     return sValue;
   };
+
+  async function getModelTipoDocumento(idTipoDocumento) {
+    let sql;
+    let sValue = [];
+
+    try{
+      sql = `SELECT ID_TIPO_DOCUMENTO, NOMBRE FROM DB_TIPO_DOCUMENTO
+                     WHERE ID_TIPO_DOCUMENTO = ?`;
+      const result = await cds.run(sql, [idTipoDocumento]);
+      for (const rs of result) {
+        let record = {};
+        record.ID_TIPO_DOCUMENTO = rs.ID_TIPO_DOCUMENTO;
+        record.NOMBRE = rs.NOMBRE;
+        sValue.push(record);
+      }
+    }catch (e){
+      return { error: e.message, accion: getModelTipoDocumento, query: sql }
+    }
+    return sValue;
+  }
 
   async function getTipoMetadata(idDocumento, idTipoDocumento) {
     let sql;
-    const sValue = [];
+    let sValue = [];
+    
+    try{
+      sql = `SELECT DISTINCT TD.NOMBRE,
+                             MET.ATRIBUTO,
+                             MET.TIPO_ATRIBUTO
+                  FROM DB_METADATA AS MET
+                  JOIN DB_TIPO_DOCUMENTO AS TD
+                    ON TD.ID_TIPO_DOCUMENTO = MET.ID_TIPO_DOCUMENTO
+                  WHERE MET.ID_TIPO_DOCUMENTO = ?`;
 
-    try {
-      sql = `
-      SELECT DISTINCT
-        TD.NOMBRE       AS NOMBRE_TIPO_DOCUMENTO,
-        MET.ATRIBUTO    AS ATRIBUTO,
-        MET.TIPO_ATRIBUTO AS TIPO_ATRIBUTO
-      FROM DB_METADATA MET
-       JOIN DB_TIPO_DOCUMENTO TD
-       ON TD.ID_TIPO_DOCUMENTO = MET.ID_TIPO_DOCUMENTO 
-      WHERE MET.ID_TIPO_DOCUMENTO = ?`;
-      //   AND MET.ID_DOCUMENTO = ?
-
-      const result = await cds.run(sql, [idTipoDocumento /*, idDocumento*/]);
-
-      for (const gtmt of result) {
+      const result = await cds.run(sql, [idTipoDocumento]);
+      for (const rs of result) {
         let record = {};
-        record.NOMBRE_TIPO_DOCUMENTO = gtmt.NOMBRE_TIPO_DOCUMENTO;
-        record.ATRIBUTO = gtmt.ATRIBUTO;
-        record.TIPO_ATRIBUTO = gtmt.TIPO_ATRIBUTO;
+        record.NOMBRE_TIPO_DOCUMENTO = rs.NOMBRE;
+        record.ATRIBUTO = rs.ATRIBUTO;
+        record.TIPO_ATRIBUTO = rs.TIPO_ATRIBUTO;
         record.ID_TIPO_DOCUMENTO = idTipoDocumento;
         record.ID_DOCUMENTO = idDocumento;
-        //   record.MODEL_TIPO_DOCUMENTO  = await getModelTipoDocumento(idTipoDocumento);
+        record.MODEL_TIPO_DOCUMENTO = await getModelTipoDocumento(idTipoDocumento);
 
         sValue.push(record);
       }
-    } catch (e) {
+    }catch (e){
       return { error: e.message, accion: "getTipoMetadata", query: sql }
     }
-
     return sValue;
   };
 
-  this.on('update', async (req) => {
-    //re-hacer
-    let { idDocumento, idTipoDocumento, nombreArchivo } = req.data.input;
+  this.on("update", async (req) => {
+    const { ND } = req.data;
+    console.log("ND: ", ND);
 
-    if (!idDocumento || !idTipoDocumento) {
-      const resp = await getIdDocumento(nombreArchivo);
-      idDocumento = resp[0].ID_DOCUMENTO;
-      idTipoDocumento = resp[0].ID_TIPO_DOCUMENTO;
-    }
+    let resp, vis;
 
-    const vis = await getTipoMetadata(idDocumento, idTipoDocumento);
+    resp = await getIdDocumento(ND);
+
+    const idDocumento = resp[0].ID_DOCUMENTO;
+    const idTipoDocumento = resp[0].ID_TIPO_DOCUMENTO;
+
+    vis = await getTipoMetadata(idDocumento, idTipoDocumento);
     return vis;
   });
 
-  });
+});

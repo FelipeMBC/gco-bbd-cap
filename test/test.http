@@ -1280,12 +1280,194 @@ Content-Type: application/json
 GET http://localhost:4004/getMetadataTipoDocumento/update(tipoDocumento = 818)
 Content-Type: application/json
 
+### @name getListaFormatos
+POST http://localhost:4004/getMetadataTipoDocumento/getListaFormatos
+Content-Type: application/json
+
+{
+  "input": {
+    "tipoDocumento": 655
+  }
+}
+
+### @name getDocObl
+GET http://localhost:4004/getMetadataTipoDocumento/getDocObl(tipoDocumento = 818)
+Content-Type: application/json
+
+### @name getMDSAP
+GET http://localhost:4004/getMetadataTipoDocumento/getMDSAP(tipoDocumento = 655)
+Content-Type: application/json
+
+//getInstanciaWorkflow
+
+### @name getInstanciaWorkflow
+GET http://localhost:4004/getInstanciaWorkflow/get(tipoDocumento = 1044)
+Content-Type: application/json
+
+### @name update
+POST http://localhost:4004/getInstanciaWorkflow/update
+Content-Type: application/json
+
+{
+  "input":{
+    "tipoDocumento": 1044,
+    "idDocumento": 9900
+  }
+}
+
+//getFormatosPermitidos
+
+### @name get
+GET http://localhost:4004/getFormatosPermitidos/get( idTipoDocumento = )
+Content-Type: application/json
+
+//setImgPortal
+
+### @name get
+GET http://localhost:4004/setImgPortal/get(nombreArchivo = 'google.cl', idPadre = 56233)
+Content-Type: application/json
+
+### @name getUrlArchivo
+GET http://localhost:4004/setImgPortal/getUrlArchivo(idDocumento = 13034)
+Content-Type: application/json
+
+//getBusquedaByMetadata
+
+### @name update
+GET http://localhost:4004/getBusquedaByMetadata/update(ND = '12000509_6030578')
+Content-Type: application/json
+
+//getOrigenTD
+
+### @name get
+GET http://localhost:4004/getOrigenTD/get( tipoDocumento = 413 )
+Content-Type: application/json
+
+//getFormato
+
+### @name get
+GET http://localhost:4004/getFormato/get
+Content-Type: application/json
+
+### @name getNodoEstructura
+POST http://localhost:4004/getFormato/getNodoEstructura
+Content-Type: application/json
+
+{
+  "input": {
+    "nodo": 50458,
+    "json": [
+      {
+        "ATRIBUTO": "GERENCIA"
+      }
+    ]
+  }
+}
+
+//getPreguntasFrecuenciaMantenedor
+
+### @name get
+GET http://localhost:4004/getPreguntasFrecuenciaMantenedor/get(idCategoria = 50500)
+Content-Type: application/json
 
 
+//updateNombreDocumento
 
+### @name update
+POST http://localhost:4004/updateNombreDocumento/update
+Content-Type: application/json
 
+{
+  "input": {
+    "json": [
+      {
+        "nombreOriginal": "12285806_6358577",
+        "nombre": "Nuevo Nombre",
+        "urlImagen": "http://example.com/image.jpg",
+        "urlIcono": "http://example.com/icon.png"
+      }
+    ]
+  }
+}
 
+### @name updateCarpeta
+POST http://localhost:4004/updateNombreDocumento/updateCarpeta
+Content-Type: application/json
 
+{
+  "input": {
+    "json": [
+      {
+        "ID_CATEGORIA": 123,
+        "TITULO": "Nuevo Título",
+        "DESCRIPCION": "Nueva Descripción",
+        "USUARIO": "Nuevo Usuario",
+        "RESPONSABLE": "Nuevo Responsable",
+        "CORREO": "nuevo@correo.com"
+      }
+    ]
+  }
+}
+
+//getPadre
+
+### @name delete
+POST http://localhost:4004/getPadre/delete
+Content-Type: application/json
+
+{
+  "input": {
+    "idDocumento": 13034,
+    "idTipoDocumento": 998
+  }
+}
+
+### @name getEspejo
+GET http://localhost:4004/getPadre/getEspejo( idPadre = 123)
+Content-Type: application/json
+
+### @name getTD
+GET http://localhost:4004/getPadre/getTD( idPadre = 123 )
+Content-Type: application/json
+
+### @name get
+GET http://localhost:4004/getPadre/get( idPadre = 61233 )
+Content-Type: application/json
+
+// getWorkflow
+
+### @name get
+GET http://localhost:4004/getWorkflow/get( idTD = 1044 )
+Content-Type: application/json
+
+//obtenerToken
+
+### @name getTokenValue
+GET http://localhost:4004/obtenerToken/getTokenValue
+Content-Type: application/json
+
+//cutAndPaste
+### @name paste
+POST http://localhost:4004/cutAndPaste/paste
+Content-Type: application/json
+
+{
+  "input": {
+    "json": {
+      "nodoCut": 100,
+      "nodoPaste": 200,
+      "pathspCortar": "/_api/web/folders/add('GASCO/Origen')",
+      "pathspPegar": "'GASCO/Destino'",
+      "titulo": "Origen"
+    }
+  }
+}
+
+//updateDocument
+
+### @name getNodo
+GET http://localhost:4004/updateDocument/getNodo(idCat = 12079)
+Content-Type: application/json
 
 
 
@@ -1431,8 +1613,12 @@ Content-Type: application/json
 GET http://localhost:4004/getUsuariosAprobadores/getTD
 Content-Type: application/json
 
-#### @name getNivel|
+#### @name getNivel
 GET http://localhost:4004/getUsuariosAprobadores/getNivel(id = 759)
+Content-Type: application/json
+
+### @name getSuplentes
+GET http://localhost:4004/getUsuariosAprobadores/getSuplentes
 Content-Type: application/json
 
 //getListAdjuntosPF

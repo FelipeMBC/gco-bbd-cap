@@ -5,6 +5,5 @@ service getFormato {
     type object {};
 
     action   getNodoEstructura(input: object) returns object;
-
-    function getData5()                       returns object;
+    function get()                       returns array of object;
 }

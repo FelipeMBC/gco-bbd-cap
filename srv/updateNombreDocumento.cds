@@ -4,8 +4,8 @@ service updateNombreDocumento {
     @open
     type object {};
     
-    action updateCarpeta   (input: object)                     returns object;
-    action updateNombreData    (input: object)              returns object;
+    action updateCarpeta(input: object)       returns String;
+    action update(input: object)              returns String;
 
 
 }

@@ -1,9 +1,9 @@
 @protocol: 'rest'
-@path: '/upDocument'
+@path: '/updateDocument'
 service upDocument {
     @open
     type object {};
     
-    action getNodoData  (input: object)                     returns object;
+    function getNodo  (idCat: Integer)     returns object;
  
 }

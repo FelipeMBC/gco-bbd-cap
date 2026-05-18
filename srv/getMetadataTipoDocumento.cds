@@ -11,6 +11,9 @@ service getetadataTipoDocumento {
     function getList(tipoDocumento: Integer) returns array of object;
     action getIdMetadata(input: object) returns object;
     function update(tipoDocumento: Integer) returns array of object;
+    action getListaFormatos(input: object) returns array of object; 
+    function getDocObl(tipoDocumento: Integer) returns array of object;
+    function getMDSAP(tipoDocumento: Integer) returns array of object;
     
 
 }

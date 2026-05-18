@@ -1,11 +1,11 @@
-  ////////////////////////////////
-  ///////UPDATENOMBREDOCUMENTO////
-  ////////////////////////////////
+////////////////////////////////
+///////UPDATENOMBREDOCUMENTO////
+////////////////////////////////
 
-  const cds = require("@sap/cds");
+const cds = require("@sap/cds");
 
-  module.exports = cds.service.impl(async function () {
-    const db = await cds.connect.to("db");
+module.exports = cds.service.impl(async function () {
+  const db = await cds.connect.to("db");
 
   async function updateNombreCarpeta(json) {
     const idCat = json[0].ID_CATEGORIA;
@@ -64,7 +64,7 @@
       await cds.run(sql, [nombre, urlImagenDec, urlIconoDec, nombreOriginal]);
       return "OK";
     } catch (e) {
-      return { error: e.message };
+      return { error: e.message , accion: "updateNombreDocumento", respuesta: "FALLO" };
     }
   };
 
@@ -74,7 +74,7 @@
     return rsp;
   });
 
-  this.on('updateNombreData', async (req) => {
+  this.on('update', async (req) => {
     const { json } = req.data.input;
     const rsp = await updateNombreDocumento(json);
     return rsp;

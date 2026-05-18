@@ -70,9 +70,9 @@
     return output;
   };
 
-  this.on('getData30', async (req) => {
+  this.on('get', async (req) => {
 
-    const { idTD } = req.data.input;
+    const { idTD } = req.data;
     const idTipoDocumento = await getEstLib6(idTD); //740
     const visualizadores = (idTipoDocumento === false) ? [] : await getWorkFlow3(idTD, idTipoDocumento);
 

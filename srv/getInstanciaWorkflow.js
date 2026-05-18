@@ -66,14 +66,15 @@
     }
   };
 
-  this.on('getData8', async (req) => {
-    const { tipoDocumento } = req.data.input;
+  this.on('get', async (req) => {
+    const { tipoDocumento } = req.data;
     const visualizadores = await getIdEstLib(tipoDocumento);
     return visualizadores;
   });
 
-  this.on('getUpdateDate', async (req) => {
+  this.on('update', async (req) => {
     const { tipoDocumento, idDocumento } = req.data.input;
+    console.log(tipoDocumento, idDocumento);
     const visualizadores = await getIdEstLib(tipoDocumento);
     let sValue = "NO";
 
