@@ -5,6 +5,6 @@ service monitor {
     type object {};
     
     action getTransferencias(input: object)                     returns object;
-    action reprocesarTransferencia(input: object)              returns object;
+    action reprocesarTransferencia(input: object)               returns object;
 
 }

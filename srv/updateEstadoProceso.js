@@ -22,7 +22,7 @@
     }
   };
 
-  this.on('updateProc', async (req) => {
+  this.on('update', async (req) => {
     const { estado, idPortal } = req.data.input;
     const rsp = await updateEstadoProceso(estado, idPortal);
     return rsp

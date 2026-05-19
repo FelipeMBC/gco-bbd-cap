@@ -1469,6 +1469,21 @@ Content-Type: application/json
 GET http://localhost:4004/updateDocument/getNodo(idCat = 12079)
 Content-Type: application/json
 
+//updateEstadoProceso
+
+### @name update
+POST http://localhost:4004/updateEstadoProceso/update
+Content-Type: application/json
+
+{
+  "input": {
+    "estado": "Finalizado",
+    "idPortal": 77
+  }
+}
+
+
+
 
 
 
@@ -1620,6 +1635,443 @@ Content-Type: application/json
 ### @name getSuplentes
 GET http://localhost:4004/getUsuariosAprobadores/getSuplentes
 Content-Type: application/json
+
+//monitor
+
+### @name getTransferencias
+POST http://localhost:4004/monitor/getTransferencias
+Content-Type: application/json
+
+{
+  "input": {
+    "f1": "2026-05-01",
+    "f2": "2026-05-31",
+    "estado": "1"
+  }
+}
+
+### @name reprocesarTransferencia
+POST http://localhost:4004/monitor/reprocesarTransferencia
+Content-Type: application/json
+
+{
+  "input": {
+    "json": {
+      "BUS": "BUS_TEST",
+      "TABLA": "QMEL",
+      "ORIGINAL": "1542026_425_JXaT9_1844"
+    }
+  }
+}
+
+//reportes
+
+### @name getPortalXUser
+POST http://localhost:4004/reportes/getPortalXUser
+Content-Type: application/json
+
+{
+  "json":{
+    "EMAIL": "fherrera@sapnet.cl"
+  }
+}
+
+### @name planillaArchivosProveedorDigital
+POST http://localhost:4004/reportes/planillaArchivosProveedorDigital?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {
+    "USUARIO": "%",
+    "RESPONSABLE": "%",
+    "FECHA_CARGA_INI": "2018-01-01",
+    "FECHA_CARGA_FIN": "2026-12-31"
+  }
+}
+
+### @name planillaArchivosPorVencerDigital
+POST http://localhost:4004/reportes/planillaArchivosPorVencerDigital?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {
+    "USUARIO": "%",
+    "RESPONSABLE": "%",
+    "FECHA_CARGA_INICIO": "2020-01-01",
+    "FECHA_CARGA_FIN": "2026-12-31",
+    "FECHA_VENCIMIENTO_INICIO": "2020-01-01",
+    "FECHA_VENCIMIENTO_FIN": "2026-12-31"
+  }
+}
+
+### @name planillaArchivosProveedorFisico
+POST http://localhost:4004/reportes/planillaArchivosProveedorFisico?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {
+    "USUARIO": "%",
+    "RESPONSABLE": "%",
+    "FECHA_CARGA_INI": "2000-01-01",
+    "FECHA_CARGA_FIN": "2026-12-31"
+  }
+}
+
+
+### planillaArchivosProveedorFisico
+POST http://localhost:4004/reportes/planillaArchivosProveedorFisico?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {
+    "USUARIO": "%",
+    "RESPONSABLE": "%",
+    "FECHA_CARGA_INI": "2000-01-01",
+    "FECHA_CARGA_FIN": "2099-12-31"
+  }
+}
+
+
+### @name planillaArchivosPorVencerFisico
+POST http://localhost:4004/reportes/planillaArchivosPorVencerFisico?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {
+    "USUARIO": "%",
+    "RESPONSABLE": "%",
+    "FECHA_CARGA_INICIO": "2000-01-01",
+    "FECHA_CARGA_FIN": "2099-12-31",
+    "FECHA_VENCIMIENTO_INICIO": "2000-01-01",
+    "FECHA_VENCIMIENTO_FIN": "2099-12-31"
+  }
+}
+
+### @name planillaDocumentosProveedorDigital
+POST http://localhost:4004/reportes/planillaDocumentosProveedorDigital?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {
+    "USUARIO": "%",
+    "RESPONSABLE": "%",
+    "FECHA_CARGA_INI": "2000-01-01",
+    "FECHA_CARGA_FIN": "2099-12-31"
+  }
+}
+
+### planillaDocumentosProveedorFisico
+POST http://localhost:4004/reportes/planillaDocumentosProveedorFisico?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {
+    "USUARIO": "%",
+    "RESPONSABLE": "%",
+    "FECHA_CARGA_INI": "2000-01-01",
+    "FECHA_CARGA_FIN": "2026-12-31"
+  }
+}
+
+### @name planillaDocumentosPorVencerDigital
+POST http://localhost:4004/reportes/planillaDocumentosPorVencerDigital?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {
+    "USUARIO": "%",
+    "RESPONSABLE": "%",
+    "FECHA_CARGA_INICIO": "2000-01-01",
+    "FECHA_CARGA_FIN": "2099-12-31",
+    "FECHA_VENCIMIENTO_INICIO": "2000-01-01",
+    "FECHA_VENCIMIENTO_FIN": "2099-12-31"
+  }
+}
+
+### planillaDocumentosPorVencerFisico
+POST http://localhost:4004/reportes/planillaDocumentosPorVencerFisico?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {
+    "USUARIO": "%",
+    "RESPONSABLE": "%",
+    "FECHA_CARGA_INICIO": "2000-01-01",
+    "FECHA_CARGA_FIN": "2099-12-31",
+    "FECHA_VENCIMIENTO_INICIO": "2000-01-01",
+    "FECHA_VENCIMIENTO_FIN": "2099-12-31"
+  }
+}
+
+### @name planillaWorkflows
+POST http://localhost:4004/reportes/planillaWorkflows?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {
+    "USUARIO": "",
+    "FECHA_INICIO": "2000-01-01",
+    "FECHA_FIN": "2099-12-31",
+    "ESTADO_APROBACION": "Aprobado",
+    "FECHA_LIBERACION_INICIO": "2000-01-01",
+    "FECHA_LIBERACION_FIN": "2099-12-31",
+    "LIBERADOR_NOMBRE": ""
+  }
+}
+
+### @name planillaCriterios
+POST http://localhost:4004/reportes/planillaCriterios?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {
+    "USUARIO": "TEST",
+    "FECHA_INICIO": "2000-01-01",
+    "FECHA_FIN": "2099-12-31",
+    "RESPONSABLE": ""
+  }
+}
+
+### @name planillaTags
+POST http://localhost:4004/reportes/planillaTags?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {
+    "USUARIO": "TEST",
+    "FECHA_INICIO": "2000-01-01",
+    "FECHA_FIN": "2099-12-31",
+    "TAG": "",
+    "RESPONSABLE": ""
+  }
+}
+
+### @name documentosPorVencerFisico
+POST http://localhost:4004/reportes/documentosPorVencerFisico?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+### @name documentosPorVencerDigital
+POST http://localhost:4004/reportes/documentosPorVencerDigital?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+### @name visitasPortal
+POST http://localhost:4004/reportes/visitasPortal?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+### @name documentosCargados
+POST http://localhost:4004/reportes/documentosCargados?PORTAL=9643
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+### @name gigasUsados
+POST http://localhost:4004/reportes/gigasUsados?PORTAL=9643
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+### @name documentosPorProveedorFisico
+POST http://localhost:4004/reportes/documentosPorProveedorFisico?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+### @name documentosPorProveedorDigital
+POST http://localhost:4004/reportes/documentosPorProveedorDigital?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+### @name cincoTagsMasBuscados
+POST http://localhost:4004/reportes/cincoTagsMasBuscados?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+### @name topCriterios
+POST http://localhost:4004/reportes/topCriterios?PORTAL=9643
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+
+### @name documentosCargadosWorkflow
+POST http://localhost:4004/reportes/documentosCargadosWorkflow?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+### @name documentosAprobados
+POST http://localhost:4004/reportes/documentosAprobados?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+
+### @name documentosRechazados
+POST http://localhost:4004/reportes/documentosRechazados?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+### @name documentosAprobados
+POST http://localhost:4004/reportes/documentosAprobados?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+### @name documentosRechazados
+POST http://localhost:4004/reportes/documentosRechazados?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+### @name topUsuMayorTiempoAprobacion
+POST http://localhost:4004/reportes/topUsuMayorTiempoAprobacion?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+### @name topUsuMayorTiempoRechazo
+POST http://localhost:4004/reportes/topUsuMayorTiempoRechazo?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+### @name topUsuMenorTiempoAprobacion
+POST http://localhost:4004/reportes/topUsuMenorTiempoAprobacion?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+
+### @name topUsuMenorTiempoRechazo
+POST http://localhost:4004/reportes/topUsuMenorTiempoRechazo?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+### @name archivosPorProveedorDigital
+POST http://localhost:4004/reportes/archivosPorProveedorDigital?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+### @name archivosPorProveedorFisico
+POST http://localhost:4004/reportes/archivosPorProveedorFisico?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+### @name archivosPorVencerDigital
+POST http://localhost:4004/reportes/archivosPorVencerDigital?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+### @name archivosPorVencerFisico
+POST http://localhost:4004/reportes/archivosPorVencerFisico?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+### @name archivosCargados
+POST http://localhost:4004/reportes/archivosCargados?PORTAL=x
+Content-Type: application/json
+
+{
+  "input": {}
+}
+
+//getModelDocumentos
+
+### @name getModelDocumento
+GET http://localhost:4004/getModelDocumentos/getModelDocumento(idUsuario = 129, idPortal = 9643)
+Content-Type: application/json
+
+### getInstancia
+GET http://localhost:4004/getModelDocumentos/getInstancia( tipoDocumento = 656, nameUser = 'eperez' )
+Content-Type: application/json
+
+### updateDocumento
+POST http://localhost:4004/getModelDocumentos/updateDocumento
+Content-Type: application/json
+
+{
+  "input": {
+    "nameUser": "llopez",
+    "idDoc": 1000,
+    "idEstLib": 1,
+    "niv": 2
+  }
+}
+
+### @name getModelTipoDocumento
+GET http://localhost:4004/getModelDocumentos/getModelTipoDocumento(tipoDocumento = 746, idDoc = 20589)
+Content-Type: application/json
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //getListAdjuntosPF
 

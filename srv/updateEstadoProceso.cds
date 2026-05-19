@@ -4,6 +4,6 @@ service updateEstadoProceso {
     @open
     type object {};
     
-    action updateProc    (input: object)                     returns object;
+    action update(input: object)                     returns object;
 
 }

@@ -1,12 +1,12 @@
 
-  /////////////////////////////
-  ///////GETMODELDOCUMENTOS////
-  /////////////////////////////
+/////////////////////////////
+///////GETMODELDOCUMENTOS////
+/////////////////////////////
 
-  const cds = require("@sap/cds");
+const cds = require("@sap/cds");
 
-  module.exports = cds.service.impl(async function () {
-    const db = await cds.connect.to("db");
+module.exports = cds.service.impl(async function () {
+  const db = await cds.connect.to("db");
 
   async function getEstado1(nivel, nodo, idDoc) {
     let sql;
@@ -26,6 +26,21 @@
     }
     return des;
   };
+
+  function orderFecha2(fecha) {
+    if (!fecha) {
+      return "";
+    }
+
+    const fechaStr = String(fecha).split("T")[0];
+    const partes = fechaStr.split("-");
+
+    if (partes.length !== 3) {
+      return fechaStr;
+    }
+
+    return `${partes[2]}-${partes[1]}-${partes[0]}`;
+  }
 
   function getSTATUS(sValue) {
     let text;
@@ -234,8 +249,6 @@
     }
   };
 
-
-
   function getFecha(sValue) {
     let dia, mes, year, sValueOf;
 
@@ -249,18 +262,27 @@
 
   async function getURLDOC(doc, tipoDocumento) {
     let sql;
-    let output = [];
-    console.log(doc, tipoDocumento)
+    const output = [];
 
     try {
-      sql = `SELECT URL, TITULO, ID_DETALLE FROM DB_DETALLE 
-               WHERE ID_CATEGORIA_HOJA = ? 
-               AND ID_TIPO_DOCUMENTO = ?`;
+      sql = `
+      SELECT
+        URL,
+        TITULO,
+        ID_DETALLE
+      FROM DB_DETALLE
+      WHERE ID_CATEGORIA_HOJA = ?
+        AND ID_TIPO_DOCUMENTO = ?
+    `;
 
-      const result = await cds.run(sql, [doc, tipoDocumento]);
-      console.log("resultado de la URL: ", result)
+      const result = await cds.run(sql, [
+        doc,
+        tipoDocumento
+      ]);
+
       for (const gurl of result) {
-        let record = {};
+        const record = {};
+
         record.URL_DOCUMENTO = gurl.URL;
         record.NOMBRE_DOCUMENTO = gurl.TITULO;
         record.ID_DETALLE = gurl.ID_DETALLE;
@@ -268,11 +290,17 @@
 
         output.push(record);
       }
+
+      return output;
+
     } catch (e) {
-      return { error: e.message, accion: "getURLDOC", query: sql }
+      return {
+        error: e.message,
+        accion: "getURLDOC",
+        query: sql
+      };
     }
-    return output;
-  };
+  }
 
   async function getCargaDocObl(id_doc_bse) {
     console.log("RETORNO DEL GETCARGADOCOBL:", id_doc_bse)
@@ -309,19 +337,19 @@
 
   async function getModelTipDoc(tipoDocumento, idDoc) {
     let sql;
-    let output = [];
+    const output = [];
 
     try {
       sql = `
       SELECT DISTINCT
-        TD.NOMBRE                 AS TD_NOMBRE,
-        TD.DESCRIPCION            AS TD_DESCRIPCION,
-        CAT.TITULO                AS CAT_TITULO,
-        DOC.NOMBRE                AS DOC_NOMBRE,
-        DOC.UFH_CREAR             AS DOC_UFH_CREAR,
-        DOC.DESCRIPCION           AS DOC_DESCRIPCION,
-        DOC.ID_DOCUMENTO          AS ID_DOCUMENTO,
-        DET.ID_DETALLE            AS ID_DETALLE
+        TD.NOMBRE        AS TD_NOMBRE,
+        TD.DESCRIPCION   AS TD_DESCRIPCION,
+        CAT.TITULO       AS CAT_TITULO,
+        DOC.NOMBRE       AS DOC_NOMBRE,
+        DOC.UFH_CREAR    AS DOC_UFH_CREAR,
+        DOC.DESCRIPCION  AS DOC_DESCRIPCION,
+        DOC.ID_DOCUMENTO AS ID_DOCUMENTO,
+        DET.ID_DETALLE   AS ID_DETALLE
       FROM DB_TIPO_DOCUMENTO TD
       JOIN DB_DOCUMENTO DOC
         ON DOC.ID_TIPO_DOCUMENTO = TD.ID_TIPO_DOCUMENTO
@@ -330,13 +358,17 @@
       JOIN DB_CATEGORIA CAT
         ON CAT.ID_CATEGORIA = DET.NODO_HIJO
       WHERE TD.ID_TIPO_DOCUMENTO = ?
-        AND DOC.ID_DOCUMENTO     = ?
+        AND DOC.ID_DOCUMENTO = ?
     `;
 
-      const result = await cds.run(sql, [tipoDocumento, idDoc]);
+      const result = await cds.run(sql, [
+        tipoDocumento,
+        idDoc
+      ]);
 
       for (const gmo of result) {
-        let record = {};
+        const record = {};
+
         record.NOMBRE = gmo.TD_NOMBRE;
         record.DESCRIPCION = gmo.TD_DESCRIPCION;
         record.TITULO = gmo.CAT_TITULO;
@@ -348,20 +380,24 @@
         record.ENABLED = await setEnabedDocObl(tipoDocumento);
         record.ESTADOS = await getWorkflow1(gmo.ID_DOCUMENTO);
         record.ID_TIPO_DOCUMENTO = tipoDocumento;
-        record.URL = await getURLDOC(gmo.ID_DOCUMENTO, gmo.DOC_NOMBRE);
-
+        record.URL = await getURLDOC(gmo.ID_DOCUMENTO, tipoDocumento);
 
         output.push(record);
       }
-    } catch (e) {
-      return { error: e.message, accion: "getModelTipDoc", query: sql }
-    }
 
-    return output;
-  };
+      return output;
+
+    } catch (e) {
+      return {
+        error: e.message,
+        accion: "getModelTipDoc",
+        query: sql
+      };
+    }
+  }
 
   this.on('getModelTipoDocumento', async (req) => {
-    const { tipoDocumento, idDoc } = req.data.input;
+    const { tipoDocumento, idDoc } = req.data;
     const visualizadores = await getModelTipDoc(tipoDocumento, idDoc);
     return visualizadores;
   });
@@ -381,7 +417,7 @@
 
   async function getCantBusqueda(idPortal, td) {
     try {
-      const sql = `SELECT COUNT(*) AS CANT DB_FROM DB_NODOBUSQUEDA
+      const sql = `SELECT COUNT(*) AS CANT FROM DB_NODOBUSQUEDA
                      WHERE ID_PORTAL = ? 
                      AND ID_TIPO_DOCUMENTO = ?`;
       const result = await cds.run(sql, [idPortal, td]);
@@ -546,7 +582,7 @@
     let output = [];
 
     try {
-      sql = `SELECT URL FROM DETALLE 
+      sql = `SELECT URL FROM DB_DETALLE 
                WHERE ID_CATEGORIA_HOJA = ? 
                AND ID_TIPO_DOCUMENTO = ?`;
 
@@ -565,55 +601,70 @@
     return output;
   };
 
-  async function getInsta(idEstLib, nameUser) {
-    idEstLib = await getEstLib3(tipoDocumento);
+  async function getInsta(tipoDocumento, nameUser) {
+    let sql;
+    let record = false;
+
+    const idEstLib = await getEstLib3(tipoDocumento);
+
     nameUser = (nameUser === "fherrera") ? 21 : nameUser;
     nameUser = (nameUser === "pmendez") ? 8 : nameUser;
     nameUser = (nameUser === "llopez") ? 129 : nameUser;
     nameUser = (nameUser === "eperez") ? 112 : nameUser;
+
     try {
-      const sql = `SELECT NIV.NIVEL FROM DB_NIVELES AS NIV
-                   JOIN DB_USUARIO AS US
-                   ON US.ID_USUARIO = NIV.ID_USUARIO
-                   WHERE ID_EST_LIB = ?
-                   AND US.ID_USUARIO = ?`;
+      sql = `
+      SELECT NIV.NIVEL AS NIVEL
+      FROM DB_NIVELES AS NIV
+      JOIN DB_USUARIO AS US
+        ON US.ID_USUARIO = NIV.ID_USUARIO
+      WHERE NIV.ID_EST_LIB = ?
+        AND US.ID_USUARIO = ?
+    `;
 
       const result = await cds.run(sql, [idEstLib, nameUser]);
 
       for (const gin of result) {
-        let record;
         record = gin.NIVEL;
       }
-    } catch (e) {
-      return { error: e.message, accion: "getInsta", query: sql }
-    }
-    return record;
-  };
 
-  async function getInstaNivel(nivel) {
+    } catch (e) {
+      return {
+        error: e.message,
+        accion: "getInsta",
+        query: sql
+      };
+    }
+
+    return record;
+  }
+
+  async function getInstaNivel(tipoDocumento, nivel) {
     let sql;
+    let record = {};
+
     try {
-      const idEstLib = await getEstLib3();
+      const idEstLib = await getEstLib3(tipoDocumento);
 
       sql = `
       SELECT
         US.USERNAME              AS TITULAR,
         USU.USERNAME             AS SUPLENTE,
         USU.ID_USUARIO           AS ID_USUARIO_SUPLENTE
-      FROM DB_NIVELES   AS NIV
-      JOIN DB_USUARIO   AS US
+      FROM DB_NIVELES AS NIV
+      JOIN DB_USUARIO AS US
         ON US.ID_USUARIO = NIV.ID_USUARIO
       LEFT JOIN DB_SUPLENTE AS SU
         ON SU.ID_USUARIO_TITULAR = US.ID_USUARIO
-      LEFT JOIN DB_USUARIO  AS USU
+      LEFT JOIN DB_USUARIO AS USU
         ON USU.ID_USUARIO = SU.ID_USUARIO_SUPLENTE
-      WHERE NIV.ID_EST_LIB = ? AND NIV.NIVEL = ?
+      WHERE NIV.ID_EST_LIB = ?
+        AND NIV.NIVEL = ?
     `;
 
       const result = await cds.run(sql, [idEstLib, nivel]);
 
       for (const gniv of result) {
-
         record.USERNAME = gniv.TITULAR;
         record.EST_LIB = idEstLib;
 
@@ -632,71 +683,106 @@
       }
 
     } catch (e) {
-      return { error: e.message, accion: "getInstaNivel", query: sql }
+      return {
+        error: e.message,
+        accion: "getInstaNivel",
+        query: sql
+      };
     }
+
     return record;
-  };
+  }
+
+  this.on("getInstancia", async (req) => {
+    const { tipoDocumento, nameUser } = req.data;
+
+    let output = [];
+    let visualizadores = {};
+
+    visualizadores.PRENIVEL = await getInsta(tipoDocumento, nameUser);
+
+    if (visualizadores.PRENIVEL !== false) {
+      visualizadores.NIVEL = Number(visualizadores.PRENIVEL) + 1;
+
+      const resp = await getInstaNivel(tipoDocumento, visualizadores.NIVEL);
+
+      visualizadores.SIGUIENTELIBERADOR = resp.USERNAME;
+      visualizadores.EST_LIB = resp.EST_LIB;
+      visualizadores.USERNAME_SUPLENTE = resp.USUARIO_REEMPLAZO;
+      visualizadores.ID_SUPLENTE = resp.ID_USUARIO_REEMPLAZO;
+    }
+
+    output.push(visualizadores);
+    return output;
+  });
 
   async function updateDocumento(nameUser, idDoc) {
     let sql;
+
     try {
       sql = `
       UPDATE DB_DOCUMENTO
       SET SIGUIENTELIBERADOR = ?
       WHERE ID_DOCUMENTO = ?
     `;
-      await cds.run(sql, [nameUser.toLowerCase(), idDoc]);
+
+      await cds.run(sql, [
+        nameUser.toLowerCase(),
+        idDoc
+      ]);
+
       return "OK";
+
     } catch (e) {
-      return "FALLO";
+      return {
+        error: e.message,
+        accion: "updateDocumento",
+        query: sql
+      };
     }
-  };
-
-  this.on('getInstancia', async (req) => {
-    const { nivel } = req.data.input;
-    let output = [];
-    let visualizadores = {};
-
-    visualizadores.PRENIVEL = await getInsta(nivel);
-
-    if (visualizadores.PRENIVEL !== false) {
-      visualizadores.NIVEL = await getInsta(nivel) + 1;
-
-      const resp = await getInstaNivel(visualizadores.NIVEL);
-      visualizadores.SIGUIENTELIBERADOR = resp.USERNAME;
-      visualizadores.EST_LIB = resp.EST_LIB;
-      visualizadores.USERNAME_SUPLENTE = resp.USUARIO_REEMPLAZO;
-      visualizadores.ID_SUPLENTE = resp.ID_USUARIO_REEMPLAZO;
-    }
-    output.push(visualizadores);
-    return output;
-
-  });
+  }
 
   async function updateEstadoNivel(idEstLib, niv) {
     let sql;
-    try {
-      sql = `UPDATE DB_NIVELES
-               SET ESTADO = 2 
-               WHERE ID_EST_LIB = ? 
-               AND NIVEL = ?`;
 
-      await cds.run(sql, [idEstLib, niv]);
+    try {
+      sql = `
+      UPDATE DB_NIVELES
+      SET ESTADO = 2
+      WHERE ID_EST_LIB = ?
+        AND NIVEL = ?
+    `;
+
+      await cds.run(sql, [
+        idEstLib,
+        niv
+      ]);
 
       return "OK";
+
     } catch (e) {
-      return { error: e.message, accion: "updateEstadoNivel", query: sql }
+      return {
+        error: e.message,
+        accion: "updateEstadoNivel",
+        query: sql
+      };
     }
-  };
-  
-  this.on('updateDocumento', async (req) => {
+  }
+
+  this.on("updateDocumento", async (req) => {
     const { nameUser, idDoc, idEstLib, niv } = req.data.input;
-    let resp, resp2;
+
+    let resp;
+    let resp2;
 
     resp = await updateDocumento(nameUser, idDoc);
+
     if (resp === "OK") {
       resp2 = await updateEstadoNivel(idEstLib, niv);
+    } else {
+      return resp;
     }
+
     return resp2;
   });
 
